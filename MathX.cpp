@@ -1,6 +1,7 @@
 // Developers: ShiYuze 
 #pragma GCC optimize("O3,unroll-loops")
 #include<bits/stdc++.h>
+#include <Windows.h>
 using namespace std;
 #define rep(i,a,b,l) for(auto i=(a);(l)>0?i<=(b):i>=(b);i+=(l))
 #define RESET   "\033[0m"       // RESET
@@ -136,7 +137,6 @@ void out(string str, string color) {
 
 ld calc(string str) {
 	str = NS(str);
-	cout<<"str: "<<str<<endl; 
 	stack<string> st;
 	queue<string> q;
 	ll i = 0;
@@ -726,7 +726,7 @@ bool chao(string str){
 			return 0;
 		}
 		string line;
-		while (getline(inFile, line)) cout << line << endl;
+		while (getline(inFile, line))cout << line << endl;
 
 		inFile.close();
 		return 0;
@@ -863,24 +863,19 @@ bool chao(string str){
 	    string value_str;
 	    getline(iss, value_str);
 	    value_str.erase(0, value_str.find_first_not_of(" \t"));
-	    
+	
 	    if(isdigit(var_name[0])){
-	    	if(lagg==1)out("The variable name cannot be used in Numbers at first.\n",YELLOW);
-	    	else if(lagg==2)out("变量名开头不能用数字。\n",YELLOW);
-	    	else if(lagg==3)out("Переменные не могут начинаться с чисел.\n",YELLOW); 
-	    	return 0;
-		}
-	    if (constants.find(value_str) != constants.end()) variables[var_name] = constants.at(value_str);
-	    else if (value_str.find_first_not_of("0123456789.-") == string::npos) variables[var_name] = value_str;
-	    
-	    else {
-	        if (high_precision) variables[var_name] = high_precision_calc(value_str);
-	        else {
-	            ld result = calc(value_str);
-	            variables[var_name] = to_string(result);
-			}
+	        if(lagg==1)out("The variable name cannot be used in Numbers at first.\n",YELLOW);
+	        else if(lagg==2)out("变量名开头不能用数字。。\n",YELLOW);
+	        else if(lagg==3)out("Переменные не могут начинаться с чисел.\n",YELLOW); 
+	        return 0;
 	    }
-	    
+	
+	    ld result = calc(value_str);
+	    ostringstream oss;
+	    oss << fixed << setprecision(80) << result
+	    variables[var_name] = oss.str();
+	
 	    if(lagg==1)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
 	    else if(lagg==2)out("变量"+var_name+"已经设为"+variables[var_name]+"\n", BLUE);
 	    else if(lagg==3)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
@@ -890,16 +885,34 @@ bool chao(string str){
 	if (str == "list vars") {
 		int x = 1;
 		for (auto v : variables)
-			cout << x << ". " << v.first << " = " << v.second << endl;
+			cout << x++ << ". " << v.first << " = " << v.second << endl;
 		return 0;
 	}
 
 	if (str.rfind("delete", 0) == 0) {
-		variables.erase(str.substr(6));
-		if(lagg==1)out("Finished\n", GREEN);
-		else if(lagg==2)out("已完成。\n", GREEN);
-		else if(lagg==3)out("Готово.\n",GREEN);
-		return 0;
+	    str.erase(0, 6);
+	    str.erase(0, str.find_first_not_of(" \t"));
+	    str.erase(str.find_last_not_of(" \t") + 1);
+	    
+	    if (str.empty()) {
+	        if (lagg == 1) out("Please specify a variable name to delete.\n", RED);
+	        else if (lagg == 2) out("请指定要删除的变量名。\n", RED);
+	        else if (lagg == 3) out("Укажите имя переменной для удаления.\n", RED);
+	        return 0;
+	    }
+	    
+	    if (variables.find(str) == variables.end()) {
+	        if (lagg == 1) out("Variable '" + str + "' not found.\n", YELLOW);
+	        else if (lagg == 2) out("变量 '" + str + "' 不存在。\n", YELLOW);
+	        else if (lagg == 3) out("Переменная '" + str + "' не найдена.\n", YELLOW);
+	        return 0;
+	    }
+	    
+	    variables.erase(str);
+	    if (lagg == 1) out("Deleted '" + str + "'\n", GREEN);
+	    else if (lagg == 2) out("已删除变量 '" + str + "'\n", GREEN);
+	    else if (lagg == 3) out("Переменная '" + str + "' удалена.\n", GREEN);
+	    return 0;
 	}
 
 	if (str == "clear vars") {
