@@ -1,7 +1,6 @@
 // Developers: ShiYuze 
 #pragma GCC optimize("O3,unroll-loops")
 #include<bits/stdc++.h>
-#include <Windows.h>
 using namespace std;
 #define rep(i,a,b,l) for(auto i=(a);(l)>0?i<=(b):i>=(b);i+=(l))
 #define RESET   "\033[0m"       // RESET
@@ -63,7 +62,8 @@ const string func[100] = {
 	"arctan2"
 	"gcd",
 	"lcm",
-	"hypot" 
+	"hypot",
+	"sum" 
 };
 int yuan[100];
 
@@ -136,6 +136,7 @@ void out(string str, string color) {
 
 ld calc(string str) {
 	str = NS(str);
+	cout<<"str: "<<str<<endl; 
 	stack<string> st;
 	queue<string> q;
 	ll i = 0;
@@ -152,27 +153,33 @@ ld calc(string str) {
 		}
 
 		if (token == "setprecision") {
-			token = "";
-			i++;
-			while (i < str.size() && str[i] != ' ') {
-				token += str[i];
-				i++;
-			}
-			if (token.empty()) {
-				out("The usage of this function is to add a non-negative integer after the function name.\n", RED);
-				return 0;
-			}
-			ld sum = stold(token);
-			if (int(sum) != sum) {
-				out("The usage of this function is to add a non-negative integer after the function name.\n", RED);
-				return 0;
-			}
-			if (sum > 80) {
-				out("Error: more than long double.\n", RED);
-				return 0;
-			}
-			preci = sum;
-			return 0;
+		    token = "";
+		    i++;
+		    while (i < str.size() && str[i] != ' ') {
+		        token += str[i];
+		        i++;
+		    }
+		    if (token.empty()) {
+		        if(lagg==1) out("The usage of this function is to add a non-negative integer after the function name.\n", RED);
+		        else if(lagg==2) out("用法：请在函数名后输入一个非负整数。\n", RED);
+		        else if(lagg==3) out("Использование: укажите целое неотрицательное число после имени функции.\n", RED);
+		        return 0;
+		    }
+		    ld sum = stold(token);
+		    if (int(sum) != sum) {
+		        if(lagg==1) out("The usage of this function is to add a non-negative integer after the function name.\n", RED);
+		        else if(lagg==2) out("错误：必须输入整数。\n", RED);
+		        else if(lagg==3) out("Ошибка: требуется целое число.\n", RED);
+		        return 0;
+		    }
+		    if (sum > 80) {
+		        if(lagg==1) out("Error: precision exceeds long double limit.\n", RED);
+		        else if(lagg==2) out("错误：精度值超过long double限制。\n", RED);
+		        else if(lagg==3) out("Ошибка: точность превышает пределы long double.\n", RED);
+		        return 0;
+		    }
+		    preci = sum;
+		    return 0;
 		}
 
 		if (variables.find(token) != variables.end()) q.push(variables[token]);
@@ -206,7 +213,9 @@ ld calc(string str) {
 				st.pop();
 			}
 		} else {
-			out("Error\n", RED);
+			if(lagg==1)out("Expression error.\n", RED);
+			else if(lagg==2)out("伙计，表达式都写错了。\n",RED);
+			else if(lagg==3)out("Ошибка выражения.\n", RED);
 			return 0;
 		}
 		i++;
@@ -234,7 +243,9 @@ ld calc(string str) {
 		if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) stk.push(stold(token));
 		else if (prio(token) < 4) {
 			if (stk.size() < 2) {
-				out("Error: Insufficient " + token + " operators.\n", RED);
+				if(lagg==1)out("Error: Insufficient " + token + " operators.\n", RED);
+				else if(lagg==2)out("没有足够的"+token+"操作数，即有左没右或者反之。\n", RED);
+				else if(lagg==3)out("Ошибка: не хватает операторов " + token + " для выполнения операции.\n", RED);
 				return 0;
 			}
 			ld r = stk.top();
@@ -545,7 +556,9 @@ string high_precision_calc(string str){
 				st.pop();
 			}
 		} else {
-			out("Error\n", RED);
+			if(lagg==1)out("Expression error.\n", RED);
+			else if(lagg==2)out("伙计，表达式都写错了。\n",RED);
+			else if(lagg==3)out("Ошибка выражения.\n", RED);
 			return 0;
 		}
 		i++;
@@ -585,7 +598,9 @@ string high_precision_calc(string str){
 				result = high_precision_func::div(l,r);
 			} else if (token == "^") result = high_precision_func::pow(l, r);
 			else{
-				out("Error",RED);
+				if(lagg==1)out("Expression error.\n", RED);
+				else if(lagg==2)out("伙计，表达式都写错了。\n",RED);
+				else if(lagg==3)out("Ошибка выражения.\n", RED);
 				return 0;
 			}
 			stk.push(result);
@@ -631,7 +646,9 @@ bool chao(string str){
 	if (str.empty()) return 0;
 	if (str == "exit") exit(0);
 	if (str == "clear history") {
-		out("Finished.\n", GREEN);
+		if(lagg==1)out("Finished.\n", GREEN);
+		else if(lagg==2)out("完毕。唉，但愿我不要再说类似“已完成”这样的话了。\n", GREEN);
+		else if(lagg==3)out("Завершено.\n", GREEN); 
 		history.clear();
 		return 0;
 	}
@@ -639,11 +656,15 @@ bool chao(string str){
 	if (str == "clear local history") {
 		ofstream outFile("History.txt", ios::trunc);
 		if (!outFile) {
-			out("Error: Unable to clear history file.\n", RED);
+			if(lagg==1)out("Error: Unable to clear history file.\n", RED);
+			else if(lagg==1)out("无法清除历史文件。\n",RED);
+			else if(lagg==3)out("Не могу стереть исторические документы.\n",RED);
 			return 0;
 		}
 		outFile.close();
-		out("Local history file (History.txt) has been cleared.\n", BLUE);
+		if(lagg==1)out("Local history file (History.txt) has been cleared.\n", BLUE);
+		else if(lagg==2)out("记录已清除~\n", CYAN);
+		else if(lagg==3)out("Локальный файл истории (History.txt) был очищен.\n", BLUE);
 		return 0;
 	}
 
@@ -662,13 +683,17 @@ bool chao(string str){
 		ofstream outFile(path, ios::app);
 
 		if (!outFile) {
-			out("Error: Unable to open file '" + path + "' for writing.\n", RED);
+			if(lagg==1)out("Error: Unable to open file '" + path + "' for writing.\n", RED);
+			else if(lagg==2)out("你小子又把文件放哪了？？？\n", RED);
+			else if(lagg==3)out("Ошибка: Не удалось открыть файл '" + path + "' для записи.\n", RED);
 			return 0;
 		}
 
 		time_t now = time(0);
 		char* dt = ctime(&now);
-		outFile << "\n=== History saved on: " << dt;
+		if(lagg==1)outFile << "\n=== History saved on: " << dt;
+		else if(lagg==2)outFile << "\n===保存记录的时间：" << dt;
+		else if(lagg==3)outFile << "\n===Время записи:" << dt;
 
 		for (size_t i = 0; i < history.size(); ++i) {
 			outFile << i + 1 << ". " << history[i].in << " = "
@@ -676,7 +701,9 @@ bool chao(string str){
 		}
 
 		outFile.close();
-		out("History saved to '" + path + "' (" + to_string(history.size()) + " records)\n", GREEN);
+		if(lagg==1)out("History saved to '" + path + "' (" + to_string(history.size()) + " records)\n", GREEN);
+		else if(lagg==2)out("历史记录存于"+path+"，共"+to_string(history.size())+"条。\n",GREEN);
+		else if(lagg==3)out("История сохранена в '" + path + "' (" + to_string(history.size()) + " записей)\n", GREEN);
 		return 0;
 	}
 
@@ -693,7 +720,9 @@ bool chao(string str){
 		}
 		ifstream inFile(path);
 		if (!inFile) {
-			out("No history file found.\n", RED);
+			if(lagg==1)out("No history file found.\n", RED);
+			else if(lagg==2)out("你文件放哪了？？？？？\n",RED);
+			else if(lagg==3)out("Исторических документов нет.\n",RED);
 			return 0;
 		}
 		string line;
@@ -711,60 +740,119 @@ bool chao(string str){
 		}
 		int xv = calc(str);
 		if (xv > history.size() || xv< 1) {
-			out("Error\n", RED);
-			cout << RED << "Error." << RESET << endl;
+			if(lagg==1)out("Out of Range.\n", RED);
+			else if(lagg==2)out("超出范围。\n",RED);
+			else if(lagg==3)out("Вне диапазона.\n",RED);
 			return 0;
 		}
 		if (xv != 0)cout << history[xv - 1].in << " = " << history[xv - 1].result << "\n";
-		else out("Error.\n", RED);
+		else {
+			if(lagg==1)out("The expression is incorrect.\n", RED);
+			else if(lagg==2)out("表达式错误。\n",RED);
+			else if(lagg==3)out("Ошибка выражения.\n",RED);
+		}
 		return 0;
 	}
 
 	if (str == "help") {
-	    cout << CYAN << "MATHX COMMAND REFERENCE\n"
-	         << "=======================\n"
-	         << "Calculation:\n"
-	         << "  [expression]          Evaluate math expression\n"
-	         << "  let [var] [value]     Define variable\n"
-	         << "  list vars             List all variables\n"
-	         << "  clear vars            Clear all variables\n\n"
+		if(lagg==1){
+			cout << CYAN << "MATHX COMMAND REFERENCE\n"
+	         << "========================================\n"
+	         << "BASIC CALCULATION\n"
+	         << "  [expression]          Calculate any math expression\n"
+	         << "  let x 5               Define variable 'x' with value 5\n"
+	         << "  list vars             Show all variables\n"
+	         << "  clear vars            Delete all variables\n\n"
 	         
-	         << "Precision Control:\n"
-	         << "  setprecision [1-80]   Set decimal places\n"
-	         << "  high precision on     Enable arbitrary-precision\n"
-	         << "  high precision off    Disable arbitrary-precision\n\n"
+	         << "ADVANCED FEATURES\n"
+	         << "  sum x 1 10 x^2        Sum x2 from 1 to 10 (experimental)\n"
+	         << "  high precision on     Enable integer-only arbitrary precision\n"
+	         << "  setprecision 15       Set decimal places (1-80)\n\n"
 	         
-	         << "Display Modes:\n"
-	         << "  rpn on                Show RPN translation\n"
-	         << "  rpn off               Hide RPN\n"
-	         << "  timing on             Show execution time\n"
-	         << "  timing off            Hide timing\n\n"
+	         << "DISPLAY SETTINGS\n"
+	         << "  rpn on/off            Toggle Reverse Polish Notation mode\n"
+	         << "  timing on/off         Show/hide calculation time\n"
+	         << "  language en/zh/ru     Switch interface language\n\n"
 	         
-	         << "History System:\n"
-	         << "  !n                    Recall nth history item\n"
-	         << "  !all                  Show full history\n"
-	         << "  clear history         Clear memory history\n"
-	         << "  save history [file]   Save to file\n"
-	         << "  load history [file]   Load from file\n\n"
+	         << "HISTORY SYSTEM\n"
+	         << "  !3                    Recall 3rd calculation result\n"
+	         << "  !all                  Show complete history\n"
+	         << "  save history math.txt Export history to file\n\n"
 	         
-	         << "Learning System:\n"
-	         << "  study [topic]         Show topic details\n"
-	         << "  search [domain]       List domain functions\n\n"
+	         << "LEARNING MODE\n"
+	         << "  study derivative      Learn about calculus derivatives\n"
+	         << "  search trigonometry   List trig functions\n\n"
 	         
-	         << "System Commands:\n"
-	         << "  clear                 Clear screen\n"
-	         << "  exit                  Quit program\n\n"
+	         << "SYSTEM\n"
+	         << "  clear                 Clean the screen\n"
+	         << "  exit                  Quit MathX\n"
+	         << "========================================\n" << RESET;
+		} else if(lagg==2){
+			cout << CYAN << "MATHX 命令大全\n"
+	         << "========================================\n"
+	         << "基础计算\n"
+	         << "  [表达式]          计算数学表达式\n"
+	         << "  let x 5           定义变量x并赋值为5\n"
+	         << "  list vars         显示所有变量\n"
+	         << "  clear vars        清除全部变量\n\n"
 	         
-	         << "SUPPORTED FUNCTIONS:\n"
-	         << "Basic: + - * / ^ %\n"
-	         << "Trig: sin cos tan asin acos atan\n"
-	         << "Hyperbolic: sinh cosh tanh\n"
-	         << "Log/Exp: log ln log10 exp\n"
-	         << "Other: sqrt abs round gcd lcm\n\n"
+	         << "高级功能\n"
+	         << "  sum x 1 10 x^2    计算x2从1到10的和(实验性)\n"
+	         << "  high precision on 开启高精度整数模式\n"
+	         << "  setprecision 15   设置小数位数(1-80)\n\n"
 	         
-	         << "CONSTANTS:\n"
-	         << "pi e gamma phi sqrt2\n"
-	         << "=======================\n" << RESET;
+	         << "显示设置\n"
+	         << "  rpn on/off         切换逆波兰表达式模式\n"
+	         << "  timing on/off      显示/隐藏计算时间\n"
+	         << "  language en/zh/ru 切换界面语言\n\n"
+	         
+	         << "历史记录\n"
+	         << "  !3                 调取第3条计算结果\n"
+	         << "  !all               显示完整历史记录\n"
+	         << "  save history math.txt 导出历史到文件\n\n"
+	         
+	         << "学习模式\n"
+	         << "  study derivative   学习导数知识\n"
+	         << "  search trigonometry 列出三角函数\n\n"
+	         
+	         << "系统命令\n"
+	         << "  clear              清屏\n"
+	         << "  exit               退出程序\n"
+	         << "========================================\n" << RESET;
+		} else if(lagg==3){
+			cout << CYAN << "СПРАВКА ПО MATHX\n"
+	         << "========================================\n"
+	         << "ОСНОВНЫЕ ВЫЧИСЛЕНИЯ\n"
+	         << "  [выражение]       Вычислить математическое выражение\n"
+	         << "  let x 5           Определить переменную x = 5\n"
+	         << "  list vars         Показать все переменные\n"
+	         << "  clear vars        Удалить все переменные\n\n"
+	         
+	         << "ПРОДВИНУТЫЕ ФУНКЦИИ\n"
+	         << "  sum x 1 10 x^2    Сумма x2 от 1 до 10 (экспериментально)\n"
+	         << "  high precision on Включить режим произвольной точности\n"
+	         << "  setprecision 15    Установить знаки после запятой (1-80)\n\n"
+	         
+	         << "НАСТРОЙКИ ОТОБРАЖЕНИЯ\n"
+	         << "  rpn on/off        Переключить ОПН (обратную польскую запись)\n"
+	         << "  timing on/off     Показать/скрыть время вычислений\n"
+	         << "  language en/zh/ru Сменить язык интерфейса\n\n"
+	         
+	         << "ИСТОРИЯ ВЫЧИСЛЕНИЙ\n"
+	         << "  !3                Показать 3-й результат\n"
+	         << "  !all              Показать всю историю\n"
+	         << "  save history math.txt Экспорт истории в файл\n\n"
+	         
+	         << "ОБУЧАЮЩИЙ РЕЖИМ\n"
+	         << "  study derivative  Изучить производные\n"
+	         << "  search trigonometry Список тригонометрических функций\n\n"
+	         
+	         << "СИСТЕМА\n"
+	         << "  clear             Очистить экран\n"
+	         << "  exit              Выйти из программы\n"
+	         << "========================================\n" << RESET;
+		}
+	    
 	    return 0;
 	}
 
@@ -793,7 +881,9 @@ bool chao(string str){
 			}
 	    }
 	    
-	    out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
+	    if(lagg==1)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
+	    else if(lagg==2)out("变量"+var_name+"已经设为"+variables[var_name]+"\n", BLUE);
+	    else if(lagg==3)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
 	    return 0;
 	}
 
@@ -974,6 +1064,14 @@ bool chao(string str){
 		}
 		return 0;
 	}
+//	还在测试： 
+//	if(str.rfind("sum",0)==0){
+//		str.erase(0,2);
+//		if(str.empty()){
+//			
+//		}
+//	} 
+	
 	return 1;
 }
 
