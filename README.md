@@ -1,77 +1,99 @@
-The current MathX is version 1.8 Beta, and to be honest, it will probably stay in Beta for a long time because I have so many ideas—new ones keep popping up almost every moment that I want to add.
-
-# MathX 1.8 Beta - Advanced Mathematical Calculator
+# MathX 1.9 Beta - Advanced Mathematical Calculator
 
 ## Overview
-MathX is a feature-rich, high-performance mathematical calculator and computing environment developed in C++. Designed for both educational and professional use, it combines traditional calculator functionality with advanced features like arbitrary-precision arithmetic, symbolic computation, and an integrated knowledge system.
+MathX is a high-performance, feature-rich mathematical calculator designed for students, educators, and professionals. It combines traditional calculation capabilities with advanced features like symbolic computation, high-precision arithmetic, and a built-in learning system.
 
 ## Key Features
 
 ### Core Calculation Engine
-- **Dual-Precision Mode**: Switch between standard floating-point and high-precision integer arithmetic
-- **Comprehensive Function Support**:
-  - 30+ mathematical functions (trigonometric, logarithmic, statistical, etc.)
-  - Special functions (Gamma, erf, sinc, etc.)
-  - Unit conversion (degrees/radians)
-- **Constants Library**: Predefined mathematical constants (π, e, γ, φ, √2) with 100+ digit precision
-- **Variables System**: User-defined variables with persistence
+- Supports basic arithmetic operations: `+`, `-`, `*`, `/`, `^` (power)
+- Handles complex expressions with parentheses
+- Variable assignment and management (`let x = 5`)
+- Reverse Polish Notation (RPN) mode support
 
-### Advanced Capabilities
-- **Parallel FFT Implementation**: Optimized large-number multiplication using parallelized Fast Fourier Transform
-- **Dynamic Precision Control**: Adjustable from 1 to 80 decimal places
-- **RPN Mode**: View Reverse Polish Notation translation of expressions
-- **History System**: Complete calculation history with save/load functionality
+### Mathematical Functions
+- **Trigonometric**: `sin` , `cos`, `tan`, `arcsin`, `arccos`, `arctan`
+- **Hyperbolic**: `sinh`, `cosh`, `tanh`
+- **Logarithmic/Exponential**: `log`, `ln`, `exp`, `exp2`
+- **Special Functions**: `Gamma`, `erf`, `sinc`, `lngamma`
+- **Unit Conversion**: `atr` (degrees to radians), `rta` (radians to degrees)
+- **Multi-argument Functions**: `min`, `max`, `gcd`, `lcm`, `hypot`
 
-### Unique Functionalities
-- **Integrated Knowledge Base**:
-  - Multilingual support (English, Chinese, Russian)
-  - Contextual help system with fuzzy matching
-  - Domain-specific function documentation
-- **Performance Metrics**: Execution timing for optimization
-- **Developer-Friendly**:
-  - ANSI color-coded output
-  - GCC-optimized compilation
-  - Clean, modular architecture
+### High-Precision Mode
+- Arbitrary-precision integer arithmetic
+- Supports addition, subtraction, multiplication, division, and exponentiation
+- Enabled via `high precision on` command
 
-## Technical Specifications
-- **Language**: C++17
-- **Dependencies**: Standard Library, Windows.h (for console operations)
-- **Optimizations**: 
-  - `#pragma GCC optimize("O3,unroll-loops")`
-  - SIMD-parallelized FFT
-  - Move semantics for large-number operations
+### Learning System
+- Built-in knowledge base covering:
+  - Trigonometry
+  - Algebra (polynomials, matrices)
+  - Calculus (derivatives, integrals)
+- Accessible via `study [topic]` and `search [domain]` commands
+
+### Practical Features
+- **History System**:
+  - Recall previous results with `!n`
+  - Save/load history to files
+- **Customization**:
+  - Set decimal precision (`setprecision n`)
+  - Toggle timing display
+  - Multilingual interface (English, Chinese, Russian)
+- **Visual Output**:
+  - Color-coded messages
+  - Clean, formatted display
 
 ## Usage Examples
-```plaintext
-Basic: 2 * sin(pi/4)
-Variables: let x 42 then x^2
-Precision: setprecision 20
-High-precision: 12345678901234567890 * 9876543210987654321
-Knowledge: study derivative
+
+### Basic Calculation
+```
+>> 2 * sin(pi/4) + 3^2
+Result = 10.4142135624
 ```
 
-## Building
-```bash
-g++ MathX.cpp -o MathX -O3 -march=native -funroll-loops
+### Variable Assignment
+```
+>> let x 5
+>> x^2 + 3*x - 2
+Result = 38.0000000000
 ```
 
-## Known Limitations
-- High-precision mode currently limited to integer operations
-- Windows console dependency for color output
-- Beta status indicates ongoing API changes
+### High-Precision Mode
+```
+>> high precision on
+>> 123456789 * 987654321
+Result = 121932631112635269
+```
 
-## Contribution Guidelines
-As the sole developer currently, I welcome:
-- Bug reports with reproducible cases
-- Performance optimization suggestions
-- Mathematical function implementations
-- Documentation improvements
+### Learning System
+```
+>> study derivative
+[Displays derivative concepts and rules]
+```
 
-This project reflects my passion for both mathematics and systems programming - where elegant algorithms meet optimized implementation. The "beta" tag represents not instability, but rather the endless stream of improvements I continue to implement.
+## Command Reference
 
-**Developer**: ShiYuze  
-**Version**: 1.8 Beta  
-**License**: Proprietary (for now)
+| Command                | Description                          |
+|------------------------|--------------------------------------|
+| `help`                 | Show all available commands         |
+| `let x 5`              | Assign value to variable            |
+| `list vars`            | Show all variables                  |
+| `clear vars`           | Clear all variables                |
+| `setprecision 15`      | Set decimal places (1-80)          |
+| `rpn on/off`           | Toggle RPN mode                    |
+| `timing on/off`        | Toggle calculation timing display  |
+| `language en/zh/ru`    | Change interface language          |
+| `!3`                   | Recall 3rd calculation result      |
+| `!all`                 | Show complete history              |
+| `save history file.txt`| Export history to file             |
+| `study [topic]`        | Learn about mathematical concepts  |
+| `search [domain]`      | List functions in a domain         |
+| `high precision on/off`| Toggle high-precision integer mode |
+| `clear`                | Clear screen                       |
+| `exit`                 | Quit MathX                         |
 
-By the way, since I prefer putting all functions into a single file, if you only need one language, just download the main MathX file and the language pack (the .txt one!), then place them in the same folder—it'll run directly!
-Since this version is updated very quickly, the help provided by the 'help' command may not be very comprehensive. I will provide some usage examples later, and you can also check the chao(string str) function in the documentation, which contains a long if statement for special commands.
+## Development Status
+Current version: 1.9 Beta  
+This is an actively developed project with regular updates and feature additions.
+
+Contribute or report issues on our GitHub repository!
