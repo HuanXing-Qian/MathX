@@ -74,3 +74,4 @@ This project reflects my passion for both mathematics and systems programming - 
 **License**: Proprietary (for now)
 
 By the way, since I prefer putting all functions into a single file, if you only need one language, just download the main MathX file and the language pack (the .txt one!), then place them in the same folder—it'll run directly!
+Since this version is updated very quickly, the help provided by the 'help' command may not be very comprehensive. I will provide some usage examples later, and you can also check the chao(string str) function in the documentation, which contains a long if statement for special commands.
