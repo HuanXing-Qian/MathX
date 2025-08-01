@@ -50,13 +50,6 @@ High-precision: 12345678901234567890 * 9876543210987654321
 Knowledge: study derivative
 ```
 
-## Development Roadmap
-- [ ] Symbolic computation engine
-- [ ] Matrix operations
-- [ ] Graphical plotting
-- [ ] Plugin system for custom functions
-- [ ] Cross-platform compatibility
-
 ## Building
 ```bash
 g++ MathX.cpp -o MathX -O3 -march=native -funroll-loops
