@@ -804,7 +804,6 @@ bool chao(string str){
 	         << "  clear vars            Delete all variables\n\n"
 	         
 	         << "ADVANCED FEATURES\n"
-	         << "  sum x 1 10 x^2        Sum x2 from 1 to 10 (experimental)\n"
 	         << "  high precision on     Enable integer-only arbitrary precision\n"
 	         << "  setprecision 15       Set decimal places (1-80)\n\n"
 	         
@@ -836,7 +835,6 @@ bool chao(string str){
 	         << "  clear vars        清除全部变量\n\n"
 	         
 	         << "高级功能\n"
-	         << "  sum x 1 10 x^2    计算x2从1到10的和(实验性)\n"
 	         << "  high precision on 开启高精度整数模式\n"
 	         << "  setprecision 15   设置小数位数(1-80)\n\n"
 	         
@@ -868,7 +866,6 @@ bool chao(string str){
 	         << "  clear vars        Удалить все переменные\n\n"
 	         
 	         << "ПРОДВИНУТЫЕ ФУНКЦИИ\n"
-	         << "  sum x 1 10 x^2    Сумма x2 от 1 до 10 (экспериментально)\n"
 	         << "  high precision on Включить режим произвольной точности\n"
 	         << "  setprecision 15    Установить знаки после запятой (1-80)\n\n"
 	         
@@ -1095,7 +1092,7 @@ bool chao(string str){
 	    if(max_score > func_name.size()/2) {
 	    	if(lagg==1)out("Did you mean \"" + best_match + "\"?\n", YELLOW);
 	    	else if(lagg==2)out("您想说的是\""+best_match+"\"？\n", YELLOW);
-	    	else if(lagg==3)out("Вы хотели сказать\""+best_match+"\"?", YELLOW);
+	    	else if(lagg==3)out("Вы хотели сказать\""+best_match+"\"?\n", YELLOW);
 		}
 	    else {
 	    	if(lagg==1)out("No matching concept found.\n", RED);
@@ -1175,9 +1172,9 @@ void Ready(){
 		if(func[i]!="")yuan[i]=x;
 	}
 	cout << "========================================\n"
-	     << "|           MathX 1.95 Beta            |\n"
+	     << "|            MathX 1.95 Beta            |\n"
 	     << "|      Enter [help] for commands       |\n"
-	     << "|       Example: 2sin(pi/4)            |\n"
+	     << "|       Example: 2 * sin(pi/4)         |\n"
 	     << "========================================\n";
 }
 
