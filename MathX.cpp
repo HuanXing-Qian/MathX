@@ -26,9 +26,11 @@ using ld = long double;
 
 ll preci = 10;
 int lagg = 1;
+int baoliu=4;
 bool timing = 1;
 bool RPN = 0;
 bool high_precision = 0;
+bool science = 0;
 
 const string func[100] = {
 	"sqrt",
@@ -608,6 +610,16 @@ string high_precision_calc(string str){
 		st.pop();
 	}
 	
+	if (RPN) {
+		cout << "RPN: ";
+		auto newq = q;
+		while (!newq.empty()) {
+			cout << newq.front() << ' ';
+			newq.pop();
+		}
+		cout << "\n";
+	}
+	
 	stack<string> stk;
 	
 	while (!q.empty()) {
@@ -691,6 +703,33 @@ bool chao(string str){
 		history.clear();
 		return 0;
 	}
+	
+	if(str=="science off"){
+		if(lagg==1)out("The Scientific notation mode has been turned off.\n", "\033[90m");
+		else if(lagg==2)out("已关闭科学计数法模式。\n", "\033[90m");
+		else if(lagg==3)out("Научный метод подсчёта закрыт.\n","\033[90m");
+		science=0;
+		return 0;
+	}
+	
+	if(str.rfind("science",0)==0){
+		str.erase(0,8);
+		if(!str.empty()){
+			bool f=1;
+			for(char c :str)if(!isdigit(c)){f=0;break;}
+			if(f){
+				baoliu = stoi(str);
+				if(lagg==1)out("The number of reserved digits is adjusted to "+to_string(baoliu)+"\n",CYAN);
+				else if(lagg==2)out("保留位数调整为 "+to_string(baoliu)+"\n",CYAN);
+				else if(lagg==3)out("Оговорка была изменена на"+to_string(baoliu)+"\n",CYAN);
+			}
+		} 
+		if(lagg==1)out("The Scientific Notation mode has been enabled. Note: It can only be used in high-precision mode and will not display the full digits.\n",BLUE);
+		else if(lagg==2)out("已开启科学计数法模式，注意：只能在高精度模式下使用，且会不显示完整数位。\n", BLUE);
+		else if(lagg==3)out("Включен режим научного счёта, заметьте: его можно использовать только в режиме высокой точности, и он не будет отображать полный разряд.\n",BLUE);
+		science=1;
+		return 0;
+	} 
 
 	if (str == "clear local history") {
 		ofstream outFile("History.txt", ios::trunc);
@@ -998,9 +1037,9 @@ bool chao(string str){
 	
 	if (str == "high precision on" || str == "high precision" || str == "high"){
 		high_precision = 1;
-		if(lagg==1)out("Opened high precision.\nNote: Only addition (+), subtraction (-), multiplication (*), and division (/) can be used in high precision mode, and only integers can be input and output in this mode.\n", CYAN);
-		else if(lagg==2)out("已开启高精度模式。\n注意：高精度模式下仅支持加法（+）、减法（-）、乘法（*）和除法（/）运算，且该模式下仅允许输入和输出整数。\n",CYAN);
-		else if(lagg==3)out("Активирован режим высокой точности.\nПримечание: В этом режиме доступны только операции сложения (+), вычитания (-), умножения (*) и деления (/), а ввод и вывод возможны только в целых числах.\n",CYAN);
+		if(lagg==1)out("Opened high precision.\nNote: Only addition (+), subtraction (-), multiplication (*), and division (/), power(^)can be used in high precision mode, and only integers can be input and output in this mode.\n", CYAN);
+		else if(lagg==2)out("已开启高精度模式。\n注意：高精度模式下仅支持加法（+）、减法（-）、乘法（*）和除法（/）、次方（^）运算，且该模式下仅允许输入和输出整数。\n",CYAN);
+		else if(lagg==3)out("Активирован режим высокой точности.\nПримечание: В этом режиме доступны только операции сложения (+), вычитания (-), умножения (*) и деления (/),Степен (^), а ввод и вывод возможны только в целых числах.\n",CYAN);
 		return 0; 
 	} 
 	
@@ -1144,24 +1183,41 @@ void Run() {
 
     if(!high_precision){
         ld result = calc(str);
+        auto end = chrono::high_resolution_clock::now();
+		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
         if(lagg==1)cout << "Result = ";
         else if(lagg==2)cout<<"结果 = ";
         else if(lagg==3)cout<<"Результат = "; 
         cout << fixed << setprecision(preci) << result << "\n";
         history.push_back({str, to_string(result)});
+        if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
     } else {
     	string result = high_precision_calc(str);
-        if(lagg==1)cout << "Result = ";
-        else if(lagg==2)cout<<"结果 = ";
-        else if(lagg==3)cout<<"Результат = "; 
-		cout << result << "\n";
-        history.push_back({str, result});
+    	auto end = chrono::high_resolution_clock::now();
+		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
+		if(lagg==1)cout << "Result = ";
+	    else if(lagg==2)cout<<"结果 = ";
+	    else if(lagg==3)cout<<"Результат = "; 
+    	if(science){
+			if(result.size()<baoliu){
+				cout<<result<<endl;
+				history.push_back({str, result});
+			} else{
+				string jia;
+				jia+=result[0]+".";
+				rep(i,1,(baoliu-1),1)jia+=result[i];
+				jia+="e"+to_string(int(result.size()-1));
+				history.push_back({str,jia});
+				cout<<jia<<"\n";
+			}
+			
+		}else{
+			cout << result << "\n";
+        	history.push_back({str, result});
+		}
+		
+        if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
     }
-
-	auto end = chrono::high_resolution_clock::now();
-	auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
-
-	if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 }
 
 void Ready(){
@@ -1172,9 +1228,9 @@ void Ready(){
 		if(func[i]!="")yuan[i]=x;
 	}
 	cout << "========================================\n"
-	     << "|            MathX 1.95 Beta            |\n"
+	     << "|            MathX 2.0 Beta            |\n"
 	     << "|      Enter [help] for commands       |\n"
-	     << "|       Example: 2 * sin(pi/4)         |\n"
+	     << "|          Example: 2sin(pi/4)         |\n"
 	     << "========================================\n";
 }
 
