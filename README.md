@@ -1,99 +1,100 @@
-# MathX 1.9 Beta - Advanced Mathematical Calculator
+# MathX 2.0 Beta - 多功能科学计算器
 
-## Overview
-MathX is a high-performance, feature-rich mathematical calculator designed for students, educators, and professionals. It combines traditional calculation capabilities with advanced features like symbolic computation, high-precision arithmetic, and a built-in learning system.
+MathX 是一个功能强大的科学计算器程序，支持高精度计算、变量存储、历史记录和多种数学函数。
 
-## Key Features
+## 功能特性
 
-### Core Calculation Engine
-- Supports basic arithmetic operations: `+`, `-`, `*`, `/`, `^` (power)
-- Handles complex expressions with parentheses
-- Variable assignment and management (`let x = 5`)
-- Reverse Polish Notation (RPN) mode support
+### 基础计算
+- 支持基本算术运算：`+`, `-`, `*`, `/`, `^` (幂运算), `%` (取模)
+- 支持科学计数法显示
+- 支持括号优先级运算
 
-### Mathematical Functions
-- **Trigonometric**: `sin` , `cos`, `tan`, `arcsin`, `arccos`, `arctan`
-- **Hyperbolic**: `sinh`, `cosh`, `tanh`
-- **Logarithmic/Exponential**: `log`, `ln`, `exp`, `exp2`
-- **Special Functions**: `Gamma`, `erf`, `sinc`, `lngamma`
-- **Unit Conversion**: `atr` (degrees to radians), `rta` (radians to degrees)
-- **Multi-argument Functions**: `min`, `max`, `gcd`, `lcm`, `hypot`
+### 高级数学函数
+- 三角函数：`sin`, `cos`, `tan`, `arcsin`, `arccos`, `arctan`
+- 双曲函数：`sinh`, `cosh`, `tanh`
+- 对数函数：`log`=`ln`, `log10`, `log2`
+- 其他函数：`sqrt`, `exp`, `ceil`, `floor`, `round`, `abs`, `Gamma` 等
 
-### High-Precision Mode
-- Arbitrary-precision integer arithmetic
-- Supports addition, subtraction, multiplication, division, and exponentiation
-- Enabled via `high precision on` command
+### 特殊功能
+- **高精度模式**：支持任意精度整数运算
+- **变量存储**：可定义和调用变量
+- **历史记录**：保存和查看计算历史
+- **多语言支持**：英语、中文、俄语界面
+- **学习模式**：内置数学概念解释，可扩展
 
-### Learning System
-- Built-in knowledge base covering:
-  - Trigonometry
-  - Algebra (polynomials, matrices)
-  - Calculus (derivatives, integrals)
-- Accessible via `study [topic]` and `search [domain]` commands
+## 快速开始
 
-### Practical Features
-- **History System**:
-  - Recall previous results with `!n`
-  - Save/load history to files
-- **Customization**:
-  - Set decimal precision (`setprecision n`)
-  - Toggle timing display
-  - Multilingual interface (English, Chinese, Russian)
-- **Visual Output**:
-  - Color-coded messages
-  - Clean, formatted display
+1. 直接输入数学表达式进行计算，例如：
+   ```
+   >> 2*sin(pi/4)
+   结果 = 1.4142
+   ```
 
-## Usage Examples
+2. 使用变量：
+   ```
+   >> let x 5
+   变量x已经设为5.000000...
+   >> x^2
+   结果 = 25.0000
+   ```
 
-### Basic Calculation
+3. 查看帮助：
+   ```
+   >> help
+   ```
+
+## 命令参考
+
+### 计算设置
+- `setprecision [n]` - 设置小数位数(1-80)
+- `high precision on/off` - 开启/关闭高精度模式，也可以使用`high`启用。
+- `science [n]` - 开启科学计数法模式，可选保留位数，也可以空出来。
+
+### 变量操作
+- `let [var] [value]` - 定义变量
+- `list vars` - 列出所有变量
+- `clear vars` - 清除所有变量
+- `delete [var]` - 删除特定变量
+
+### 历史记录
+- `!n` - 查看第n条历史记录
+- `!all` - 查看全部历史
+- `save history [filename]` - 保存历史到文件
+- `clear history` - 清除历史记录
+- `load history [filename]` - 加载本地文件，不加入当前终端的history
+- `clear local history` - 清除本地历史，只清除History.txt的。
+
+### 界面设置
+- `language [en/zh/ru]` - 切换界面语言
+- `timing on/off` - 显示/隐藏计算时间
+- `rpn on/off` - 开启/关闭逆波兰表示法显示
+- `clear` - 清屏
+
+### 学习模式
+- `study [topic]` - 学习数学概念
+- `search [category]` - 搜索函数类别
+
+## 示例
+
+计算复合表达式：
 ```
->> 2 * sin(pi/4) + 3^2
-Result = 10.4142135624
+>> (2+3)sin(pi/2)^2
+结果 = 5.0000
+```
+这里是可以使用隐式乘法的
+
+使用高精度模式：
+```
+>> high
+已开启高精度模式。
+注意：高精度模式下仅支持加法（+）、减法（-）、乘法（*）和除法（/）、次方（^）运算，且该模式下仅允许输入和输出整数。
+>> 12345678901234567890 * 98765432109876543210
+结果 = 1219326311370217952237463801111263526900
+Use:0 ms.
+>>
 ```
 
-### Variable Assignment
-```
->> let x 5
->> x^2 + 3*x - 2
-Result = 38.0000000000
-```
+## 运行
+直接下载exe文件并下载知识库语言包，基础下载knowledge_en.txt
 
-### High-Precision Mode
-```
->> high precision on
->> 123456789 * 987654321
-Result = 121932631112635269
-```
-
-### Learning System
-```
->> study derivative
-[Displays derivative concepts and rules]
-```
-
-## Command Reference
-
-| Command                | Description                          |
-|------------------------|--------------------------------------|
-| `help`                 | Show all available commands         |
-| `let x 5`              | Assign value to variable            |
-| `list vars`            | Show all variables                  |
-| `clear vars`           | Clear all variables                |
-| `setprecision 15`      | Set decimal places (1-80)          |
-| `rpn on/off`           | Toggle RPN mode                    |
-| `timing on/off`        | Toggle calculation timing display  |
-| `language en/zh/ru`    | Change interface language          |
-| `!3`                   | Recall 3rd calculation result      |
-| `!all`                 | Show complete history              |
-| `save history file.txt`| Export history to file             |
-| `study [topic]`        | Learn about mathematical concepts  |
-| `search [domain]`      | List functions in a domain         |
-| `high precision on/off`| Toggle high-precision integer mode |
-| `clear`                | Clear screen                       |
-| `exit`                 | Quit MathX                         |
-
-## Development Status
-Current version: 1.9 Beta  
-This is an actively developed project with regular updates and feature additions.
-
-Contribute or report issues on our GitHub repository!
+**注意**：此版本为2.0 Beta，仍在开发中，但是放在仓库里面的都是稳定版的！
