@@ -158,6 +158,13 @@ string NS(string expr) {
             continue;
         }
         
+        if(i+2<len&&result[i]==')'&&result[i+2]=='('){
+        	final+=result[i];
+        	final+=" * ";
+        	i++;
+        	continue;
+		}
+        
         final += result[i];
         i++;
     }
@@ -171,6 +178,7 @@ void out(string str, string color) {
 
 ld calc(string str) {
 	str = NS(str);
+//	cout<<str<<endl; 
 	stack<string> st;
 	queue<string> q;
 	ll i = 0;
@@ -1169,7 +1177,7 @@ void Ready(){
 	cout << "========================================\n"
 	     << "|           MathX 1.95 Beta            |\n"
 	     << "|      Enter [help] for commands       |\n"
-	     << "|       Example: 2 * sin(pi/4)         |\n"
+	     << "|       Example: 2sin(pi/4)            |\n"
 	     << "========================================\n";
 }
 
