@@ -1,7 +1,6 @@
 // Developers: ShiYuze 
 #pragma GCC optimize("O3,unroll-loops")
 #include<bits/stdc++.h>
-#include <Windows.h>
 using namespace std;
 #define rep(i,a,b,l) for(auto i=(a);(l)>0?i<=(b):i>=(b);i+=(l))
 #define RESET   "\033[0m"       // RESET
@@ -96,39 +95,74 @@ int prio(string c) {
 }
 
 string NS(string expr) {
-	string result;
-	int len = expr.length();
+    string result;
+    int len = expr.length();
+    for (int i = 0; i < len; i++) {
+        char c = expr[i];
+        if (c == ',') result += ' ';
+        else result += c;
+        
 
-	for (int i = 0; i < len; i++) {
-		char c = expr[i];
-		if (c == ',')result += ' ';
-		else result += c;
+        if ((isalnum(c) || c == '.') && i < len - 1) {
+            char next = expr[i + 1];
+            if (string("+-*/^()").find(next) != string::npos) result += ' ';
+        }
 
-		if ((isalnum(c) || c == '.') && i < len - 1) {
-			char next = expr[i + 1];
-			if (string("+-*/^()").find(next) != string::npos) {
-				result += ' ';
-			}
-		}
+        if (string("+*/^()").find(c) != string::npos && i < len - 1) {
+            if (expr[i + 1] != ' ') result += ' ';
+        }
+        
+        if (c == '-' && i < len - 1) {
+            bool isNegativeSign = (i == 0) || (string("+-*/^( ").find(expr[i - 1]) != string::npos);
+            int j = i + 1;
+            string lin;
+            while (j < len && isalpha(expr[j])) lin += expr[j++];
+            
+            if (prio(lin) == 5) isNegativeSign = true;
+            if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
+        }
+    }
 
-		if (string("+*/^()").find(c) != string::npos && i < len - 1) {
-			if (expr[i + 1] != ' ') {
-				result += ' ';
-			}
-		}
-		if (c == '-' && i < len - 1) {
-			bool isNegativeSign = (i == 0) || (string("+-*/^( ").find(expr[i - 1]) != string::npos);
-			int j = i + 1;
-			string lin;
-			while (isalpha(expr[j]) && j < len)lin += expr[j++];
-			if (prio(lin) == 5)isNegativeSign = 1;
-			if (!isNegativeSign && expr[i + 1] != ' ') {
-				result += ' ';
-			}
-		}
-	}
+    string final;
+    len = result.length();
+    for (int i = 0; i < len; ) {
+        if (result[i] == '/' && i + 1 < len) {
+            int j = i + 1;
+            while (j < len && result[j] == ' ') j++;
+            
+            if (j < len && (isdigit(result[j]) || result[j] == '.')) {
+                int num_start = j;
+                while (j < len && (isdigit(result[j]) || result[j] == '.')) j++;
+                while (j < len && result[j] == ' ') j++;
 
-	return result;
+                if (j < len && isalpha(result[j])) {
+                    final += " / ( ";
+                    final += result.substr(num_start, j - num_start);
+                    final += " * ";
+                    int ident_start = j;
+                    while (j < len && isalpha(result[j])) j++;
+                    final += result.substr(ident_start, j - ident_start);
+                    final += " )";
+                    
+                    i = j;
+                    continue;
+                }
+            }
+        }
+        if (i + 1 < len && (isdigit(result[i]) || result[i] == '.') && 
+            isalpha(result[i + 1])) {
+            
+            final += result[i];
+            final += " * ";
+            i++;
+            continue;
+        }
+        
+        final += result[i];
+        i++;
+    }
+
+    return final;
 }
 
 void out(string str, string color) {
@@ -489,17 +523,14 @@ namespace high_precision_func {
 	    }
 	
 	    int pos = n - 1;
-	    while (pos > 0 && result[pos] == 0) {
-	        --pos;
-	    }
+	    while (pos > 0 && result[pos] == 0) --pos;
+	    
 	
 	    string res;
-	    if (negative && !(pos == 0 && result[0] == 0)) {
-	        res += '-';
-	    }
-	    for (int i = pos; i >= 0; --i) {
-	        res += to_string(result[i]);
-	    }
+	    if (negative && !(pos == 0 && result[0] == 0)) res += '-';
+	    
+	    for (int i = pos; i >= 0; --i) res += to_string(result[i]);
+	    
 	
 	    return res;
 	}
@@ -873,7 +904,7 @@ bool chao(string str){
 	
 	    ld result = calc(value_str);
 	    ostringstream oss;
-	    oss << fixed << setprecision(80) << result
+	    oss << fixed << setprecision(80) << result;
 	    variables[var_name] = oss.str();
 	
 	    if(lagg==1)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
@@ -1136,7 +1167,7 @@ void Ready(){
 		if(func[i]!="")yuan[i]=x;
 	}
 	cout << "========================================\n"
-	     << "|           MathX 1.9 Beta             |\n"
+	     << "|           MathX 1.95 Beta            |\n"
 	     << "|      Enter [help] for commands       |\n"
 	     << "|       Example: 2 * sin(pi/4)         |\n"
 	     << "========================================\n";
