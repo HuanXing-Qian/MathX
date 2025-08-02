@@ -160,6 +160,14 @@ string NS(string expr) {
             continue;
         }
         
+        if (i + 2 < len && result[i]==')' && 
+            isalpha(result[i + 2])) {
+            final += result[i];
+            final += " * ";
+            i++;
+            continue;
+		}
+        
         if(i+2<len&&result[i]==')'&&result[i+2]=='('){
         	final+=result[i];
         	final+=" * ";
