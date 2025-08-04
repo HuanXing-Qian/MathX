@@ -1,0 +1,103 @@
+3  
+三角函数 9  
+sin 7
+定义: sin(x) 是直角三角形中对边与斜边的比值，即 对边/斜边  
+展开式: sin(x)= x - x^3/3! + x^5/5! - ... + (-1)^n*x^(2n+1)/(2n+1)!  
+性质: sin^2(x) + cos^2(x) = 1, sin(-x) = -sin(x), sin(x + \pi) = -sin(x)  
+定义域: 实数 x，值域 [-1, 1]  
+关键值: sin(0) = 0, sin(\pi/6) = 0.5, sin(\pi/4) = \sqrt{2}/2, sin(\pi/3) = \sqrt{3}/2, sin(\pi/2) = 1  
+预备知识: 学习展开式需要泰勒级数，学习性质需要毕达哥拉斯定理和独立推导。  
+使用示例: sin(\pi/6), sin(x)^2+cos(x)^2 (需定义 x 或代入具体值)
+cos 7
+定义: cos(x) 是直角三角形中邻边与斜边的比值，即 邻边/斜边
+展开式: 1 - x^2/2! + x^4/4! - ... + (-1)^n*x^(2n)/(2n)!
+性质: cos^2(x) + sin^2(x) = 1, cos(-x) = cos(x), cos(x + \pi) = -cos(x)
+定义域: 实数 x，值域 [-1, 1]
+关键值: cos(0) = 1, cos(\pi/6) = \sqrt{3}/2, cos(\pi/4) = \sqrt{2}/2, cos(\pi/2) = 0  
+预备知识: 学习展开式需要泰勒级数，学习性质需要毕达哥拉斯定理和独立推导。  
+使用示例: cos(\pi/6), cos(x+\pi) (需定义 x 或代入具体值)  
+tan 7
+定义: tan(x) = sin(x)/cos(x) = 对边/邻边  
+展开式: x + x^3/3 + 2x^5/15 + ... (|x| < \pi/2)  
+性质: 1 + tan^2(x) = sec^2(x) = 1/cos^2(x), tan(-x) = -tan(x), tan(x + \pi) = tan(x)  
+定义域: 所有实数，除 \pi/2 + k\pi (k 为整数)  
+关键值: tan(0) = 0, tan(\pi/6) = 1/\sqrt{3}, tan(\pi/4) = 1, tan(\pi/3) = \sqrt{3}, tan(\pi/2)\rightarrow\infty  
+预备知识: 学习展开式需要泰勒级数，学习性质需要毕达哥拉斯定理和独立推导。  
+使用示例: tan(\pi/6), 1+tan(x)^2 (需定义 x 或代入具体值)  
+arcsin 7
+定义: sin(x) 的反函数 (即 sin^-1)  
+值域: [-\pi/2, \pi/2]  
+性质: arcsin(-x) = -arcsin(x), sin(arcsin(x)) = x (x ∈ [-1,1])  
+定义域: [-1, 1]  
+关键值: arcsin(0) = 0, arcsin(0.5) = \pi/6, arcsin(1) = \pi/2  
+预备知识: 学习 sin(x)  
+使用示例: arcsin(1), sin(arcsin(sin(arcsin(x)))) (需定义 x 或代入具体值)  
+arccos 7
+定义: cos(x) 的反函数 (即 cos^-1)  
+值域: [0, \pi]  
+性质: arccos(-x) = \pi - arccos(x), cos(arccos(x)) = x (x ∈ [-1,1])  
+定义域: [-1, 1]  
+关键值: arccos(0) = \pi/2, arccos(0.5) = \pi/3, arccos(1) = 0  
+预备知识: cos(x)，独立推导性质。  
+使用示例: arccos(-0.5), arccos(x)+arcsin(x) (需定义 x 或代入具体值)  
+arctan 7
+定义: tan(x) 的反函数 (即 tan^-1)  
+值域: (-\pi/2, \pi/2)  
+性质: arctan(-x) = -arctan(x), tan(arctan(x)) = x (x ∈ \mathbb{R})  
+定义域: \mathbb{R}  
+关键值: arctan(0) = 0, arctan(1/\sqrt{3}) = \pi/6, arctan(1) = \pi/4  
+预备知识: tan(x)  
+使用示例: arctan(2)  
+sinh 7
+定义: 双曲正弦: (e^x - e^{-x})/2  
+展开式: x + x^3/3! + x^5/5! + ...  
+性质: cosh^2(x) - sinh^2(x) = 1, sinh(-x) = -sinh(x)  
+定义域: \mathbb{R}，值域: \mathbb{R}  
+关键值: sinh(0) = 0，随 x 增大呈指数增长  
+预备知识: 指数函数  
+使用示例: cosh(x)^2-sinh(x)^2 (需定义 x 或代入具体值)  
+cosh 7
+定义: 双曲余弦: (e^x + e^{-x})/2  
+展开式: 1 + x^2/2! + x^4/4! + ...  
+性质: cosh^2(x) - sinh^2(x) = 1, cosh(-x) = cosh(x)  
+定义域: \mathbb{R}，值域: [1, +\infty)  
+关键值: cosh(0) = 1，随 x 增大呈指数增长  
+预备知识: 指数函数  
+使用示例: cosh(x)^2-sinh(x)^2 (需定义 x 或代入具体值)  
+tanh 6
+定义: 双曲正切: sinh(x)/cosh(x)  
+展开式: x - x^3/3 + 2x^5/15 - ... (|x| < \pi/2)  
+性质: 1 - tanh^2(x) = sech^2(x), tanh(-x) = -tanh(x)  
+定义域: \mathbb{R}，值域: (-1, 1)  
+关键值: tanh(0) = 0，当 x \rightarrow \pm\infty 时趋近于 \pm 1  
+使用示例: 1-tanh(x)^2 (需定义 x 或代入具体值)  
+代数 2
+多项式 6
+定义: P(x) = a_n x^n + ... + a_1 x + a_0  
+根: 使 P(x)=0 的值 (可能为复数)  
+运算: 加法 (逐项)、乘法 (卷积)  
+因式分解: x^2 - a^2 = (x-a)(x+a), x^3 \pm a^3 = (x\pm a)(x^2\mp ax+a^2)  
+预备知识: 线性/二次方程，韦达定理。  
+未实现。  
+矩阵 6
+定义: 大小为 m*n 的矩形数字表，用大写字母表示，如 A = [a_11, a_12; a_21, a_22]  
+运算: +, -, *, 行列式, 转置 (针对方阵且非奇异)  
+性质: 加法要求尺寸相同，乘法要求第一矩阵的列数与第二矩阵的行数匹配，零矩阵全为零。  
+应用: 线性系统，计算机图形学 (虽然我不需要，因为我不学工程数学)  
+学习建议: 从 2x2 开始，再推广。  
+未实现。
+数学分析 2
+导数 6
+定义: f'(x) = \lim_{h\to 0} [f(x+h)-f(x)]/h  
+规则: 幂函数 (d/dx x^n= nx^{n-1})，乘积法则 ((uv)'=u'v+uv')，链式法则 (f(g(x))'=df/dg * dg/dx=f(g)'*g(x)')  
+示例: sin(x)\rightarrow cos(x), e^x\rightarrow e^x, ln(x)\rightarrow 1/x  
+应用: 切线，优化 (这是必须学的!!!!)  
+预备知识: 学习极限需要极限知识，整体需要函数基础。  
+未实现。
+积分 6
+定义: \int f(x)dx = F(x) + C，其中 F'=f  
+方法: 换元法，分部积分，分式分解  
+示例: \int cos(x)=sin(x), \int 1/x=ln|x|  
+应用: 曲线下面积，物理学。  
+预备知识: 导数。  
+未实现。

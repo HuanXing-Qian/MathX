@@ -1,0 +1,103 @@
+3
+trig 9
+sin 7
+Definition: sin(x) = opposite/hypotenuse in right triangle
+Series: x - x^3/3! + x^5/5! - ... + (-1)^n*x^(2n+1)/(2n+1)!
+Identities: sin^2(x) + cos^2(x) = 1, sin(-x) = -sin(x), sin(x + pi) = -sin(x)
+Domain: All real numbers, Range: [-1, 1]
+Key values: sin(0) = 0, sin(pi/6) = 0.5, sin(pi/4) = sqrt(2)/2, sin(pi/3) = sqrt(3)/2, sin(pi/2) = 1
+Learn Path: Start with unit circle definition, then Taylor series, then identities
+Example of use, Try it : sin(pi/6), sin(x)^2+cos(x)^2.(Note: after def x)
+cos 7
+Definition: cos(x) = adjacent/hypotenuse in right triangle
+Series: 1 - x^2/2! + x^4/4! - ... + (-1)^n*x^(2n)/(2n)!
+Identities: cos^2(x) + sin^2(x) = 1, cos(-x) = cos(x), cos(x + pi) = -cos(x)
+Domain: All real numbers, Range: [-1, 1]
+Key values: cos(0) = 1, cos(pi/6) = sqrt(3)/2, cos(pi/4) = sqrt(2)/2, cos(pi/2) = 0
+Learn Path: Understand relation to sin(x), study even function properties
+Example of use, Try it: cos(pi/6), cos(x+pi) (Note: after def x)
+tan 7
+Definition: tan(x) = sin(x)/cos(x) = opposite/adjacent
+Series: x + x^3/3 + 2x^5/15 + ... (valid for |x| < pi/2)
+Identities: 1 + tan^2(x) = sec^2(x) = 1/cos^2 (x), tan(-x) = -tan(x), tan(x + pi) = tan(x)
+Domain: All real numbers except pi/2 + k*pi (k integer)
+Key values: tan(0) = 0, tan(pi/6) = 1/sqrt(3), tan(pi/4) = 1, tan(pi/3) = sqrt(3), tan(pi/2)->\\infty
+Learn Path: Start as ratio of sin/cos, then study its own properties
+Example of use, Try it: tan(pi/6), 1+tan(x)^2 (Note: after def x)
+arcsin 7
+Definition: Inverse of sin function (sin^-1)
+Range: [-pi/2, pi/2]
+Identities: arcsin(-x) = -arcsin(x), sin(arcsin(x)) = x for x in [-1,1]
+Domain: [-1, 1]
+Key values: arcsin(0) = 0, arcsin(0.5) = pi/6, arcsin(1) = pi/2
+Learn Path: Study after understanding sin function and inverse functions
+Example of use, Try it: arcsin(1), sin(arcsin(sin(arcsin(x)))) (Note: after def x)
+arccos 7
+Definition: Inverse of cos function (cos^-1)
+Range: [0, pi]
+Identities: arccos(-x) = pi - arccos(x), cos(arccos(x)) = x for x in [-1,1]
+Domain: [-1, 1]
+Key values: arccos(0) = pi/2, arccos(0.5) = pi/3, arccos(1) = 0
+Learn Path: Understand relation to arcsin(x): arccos(x) = pi/2 - arcsin(x)
+Example of use, Try it: arccos(-0.5), arccos(x)+arcsin(x) (Note: after def x)
+arctan 7
+Definition: Inverse of tan function (tan^-1)
+Range: (-pi/2, pi/2)
+Identities: arctan(-x) = -arctan(x), tan(arctan(x)) = x for all real x
+Domain: All real numbers
+Key values: arctan(0) = 0, arctan(1/sqrt(3)) = pi/6, arctan(1) = pi/4
+Learn Path: Important for solving trigonometric equations
+Example of use, Try it: arctan(2)
+sinh 7
+Definition: Hyperbolic sine: (e^x - e^-x)/2
+Series: x + x^3/3! + x^5/5! + ...
+Identities: cosh^2(x) - sinh^2(x) = 1, sinh(-x) = -sinh(x)
+Domain: All real numbers, Range: All real numbers
+Key values: sinh(0) = 0, grows exponentially as x increases
+Learn Path: Study after understanding exponential function
+Example of use, Try it: cosh(x)^2-sinh(x)^2 (Note: after def x)
+cosh 7
+Definition: Hyperbolic cosine: (e^x + e^-x)/2
+Series: 1 + x^2/2! + x^4/4! + ...
+Identities: cosh^2(x) - sinh^2(x) = 1, cosh(-x) = cosh(x)
+Domain: All real numbers, Range: [1, infinity)
+Key values: cosh(0) = 1, grows exponentially as x increases
+Learn Path: Analogous to cos(x) but for hyperbolas
+Example of use, Try it: cosh(x)^2-sinh(x)^2 (Note: after def x)
+tanh 6
+Definition: Hyperbolic tangent: sinh(x)/cosh(x)
+Series: x - x^3/3 + 2x^5/15 - ... (for |x| < pi/2)
+Identities: 1 - tanh^2(x) = sech^2(x), tanh(-x) = -tanh(x)
+Domain: All real numbers, Range: (-1, 1)
+Key values: tanh(0) = 0, approaches \pm 1 as x -> \pm \infty
+Example of use, Try it: 1-tanh(x)^2 (Note: after def x)
+algebra 2
+polynomial 6
+Definition: P(x) = a_n x^n + ... + a_1 x + a_0
+Roots: Solutions to P(x)=0 (may be complex)
+Operations: Addition (term-wise), Multiplication (convolution)
+Factoring: x^2 - a^2 = (x-a)(x+a), x3 \pm a3 = (x\pma)(x^2\mp ax+a^2)
+Learn Path: Start with linear/quadratic, then Vieta's formulas
+Not supported.
+matrix 6
+Definition: Rectangular array of numbers
+Operations: +, -, *, determinant, inverse (if square & non-singular)
+Properties: Transpose, Symmetry, Eigenvalues
+Applications: Linear systems, Computer graphics
+Learn Path: Begin with 2x2 cases, then generalize
+Not supported.
+calculus 2
+derivative 6
+Definition: f'(x) = lim(h->0) [f(x+h)-f(x)]/h
+Rules: Power (d/dx x^n= nx^(n-1)), Product, Chain
+Common Derivatives: sin(x)->cos(x), e^x->e^x, ln(x)→1/x
+Applications: Tangent lines, Optimization
+Learn Path: Start with limits, then rules
+Not supported.
+integral 6
+Definition: \int f(x)dx = F(x) + C, where F'=f
+Techniques: Substitution, By parts, Partial fractions
+Common Integrals: \int cos(x)=sin(x), \int 1/x=ln|x|
+Applications: Area under curve, Physics work
+Learn Path: Begin with antiderivatives, then definite integrals
+Not supported.

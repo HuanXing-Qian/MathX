@@ -1,0 +1,255 @@
+﻿#pragma once
+
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <unordered_map>
+#include <string>
+#include <random>
+#include <map>
+#include <complex>
+#include<stack>
+#include<queue>
+#include<fstream>
+#include<chrono>
+#include<iomanip>
+#define rep(i,a,b,l) for(auto i=(a);(l)>0?i<=(b):i>=(b);i+=(l))
+#define RESET   "\033[0m"  
+#define BLACK   "\033[30m"  
+#define RED     "\033[31m"   
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"    
+#define BLUE    "\033[34m"     
+#define MAGENTA "\033[35m"  
+#define CYAN    "\033[36m"
+#define WHITE   "\033[37m"
+#define BOLDBLACK   "\033[1m\033[30m" 
+#define BOLDRED     "\033[1m\033[31m"
+#define BOLDGREEN   "\033[1m\033[32m"
+#define BOLDYELLOW  "\033[1m\033[33m"
+#define BOLDBLUE    "\033[1m\033[34m"
+#define BOLDMAGENTA "\033[1m\033[35m"
+#define BOLDCYAN    "\033[1m\033[36m"
+#define BOLDWHITE   "\033[1m\033[37m"
+using namespace std;
+const int INF = 0x3f3f3f3f;
+using ll = long long;
+using ld = long double;
+using u64 = uint64_t;
+
+ll preci = 10;
+int lagg = 1;
+int baoliu = 4;
+bool timing = 1;
+bool RPN = 0;
+bool high_precision = 0;
+bool science = 0;
+
+const string func[100] = {
+    "sqrt",
+    "sin",
+    "cos",
+    "tan",
+    "log",
+    "ln",
+    "exp",
+    "exp2",
+    "log10",
+    "log2",
+    "arcsin",
+    "arccos",
+    "arctan",
+    "sinh",
+    "cosh",
+    "tanh",
+    "ceil",
+    "floor",
+    "round",
+    "abs",
+    "erf",
+    "Gamma",
+    "sinc",
+    "lngamma",
+    "atr",
+    "rta",
+    "prime",
+    "isprime",
+    "min",
+    "max",
+    "arctan2"
+    "gcd",
+    "lcm",
+    "hypot",
+    "C",
+    "rand",
+};
+int yuan[100];
+
+const unordered_map<string, string> constants = {
+    {"pi", "3.14159265358979323846264338327950288419716939937510582097494459230781640628620899"},
+    {"e", "2.71828182845904523536028747135266249775724709369995957496696762772407663035354759"},
+    {"gamma", "0.57721566490153286060651209008240243104215933593992359880576723488486772677766467"},
+    {"phi", "1.61803398874989484820458683436563811772030917980576286213544862270526046281890245"},
+    {"sqrt2", "1.41421356237309504880168872420969807856967187537694807317667973799073247846210704"}
+};
+
+unordered_map<string, vector<pair<string, vector<string> > > > ledge;
+
+unordered_map<string, string> variables;
+
+struct node {
+    string in;
+    string result;
+};
+
+extern vector<node> history;
+
+unordered_map<string, pair<string,string> > deffunc;
+
+int prio(string c) {
+    if (c == "+" || c == "-") return 1;
+    if (c == "*" || c == "/") return 2;
+    if (c == "^" || c == "%") return 3;
+    if (find(begin(func), end(func), c) != end(func)) return 4;
+    if (constants.find(c) != constants.end()) return 5;
+    if (deffunc.find(c)!=deffunc.end())return 6;
+    return 0;
+}
+
+inline string NS(string expr) {
+    string result;
+    int len = expr.length();
+    rep(i,0,len-1,1) {
+        char c = expr[i];
+        if (c == ',') result += ' ';
+        else result += c;
+
+
+        if ((isalnum(c) || c == '.') && i < len - 1) {
+            char next = expr[i + 1];
+            if (string("+-*/^%()").find(next) != string::npos) result += ' ';
+        }
+
+        if (string("+*/^%()").find(c) != string::npos && i < len - 1) {
+            if (expr[i + 1] != ' ') result += ' ';
+        }
+
+        if (c == '-' && i < len - 1) {
+            bool isNegativeSign = (i == 0) || (string("+-*/^%( ").find(expr[i - 1]) != string::npos);
+            int j = i + 1;
+            string lin;
+            while (j < len && isalpha(expr[j])) lin += expr[j++];
+
+            if (prio(lin) == 5) isNegativeSign = true;
+            if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
+        }
+    }
+
+    string final;
+    len = result.length();
+    for (int i = 0; i < len; ) {
+        if (result[i] == '/' && i + 1 < len) {
+            int j = i + 1;
+            while (j < len && result[j] == ' ') j++;
+
+            if (j < len && (isdigit(result[j]) || result[j] == '.')) {
+                int num_start = j;
+                while (j < len && (isdigit(result[j]) || result[j] == '.')) j++;
+                while (j < len && result[j] == ' ') j++;
+
+                if (j < len && isalpha(result[j])) {
+                    final += " / ( ";
+                    final += result.substr(num_start, j - num_start);
+                    final += " * ";
+                    int ident_start = j;
+                    while (j < len && isalpha(result[j])) j++;
+                    final += result.substr(ident_start, j - ident_start);
+                    final += " )";
+
+                    i = j;
+                    continue;
+                }
+            }
+        }
+        if (i + 1 < len && (isdigit(result[i]) || result[i] == '.') &&
+            isalpha(result[i + 1])) {
+
+            final += result[i];
+            final += " * ";
+            i++;
+            continue;
+            }
+
+        if (i + 2 < len && result[i] == ')' &&
+            isalpha(result[i + 2])) {
+            final += result[i];
+            final += " * ";
+            i++;
+            continue;
+            }
+
+        if (i + 2 < len && result[i] == ')' && result[i + 2] == '(') {
+            final += result[i];
+            final += " * ";
+            i++;
+            continue;
+        }
+		
+        final += result[i];
+        i++;
+    }
+
+    return final;
+}
+
+void out(string str, string color) {
+    cout << color << str << RESET;
+}
+
+void inledge() {
+    ledge.clear();
+    string path;
+    if (lagg == 1)path = "knowledge_en.txt";
+    else if (lagg == 2)path = "knowledge_zh.txt";
+    else if (lagg == 3)path = "knowledge_ru.txt";
+    ifstream file(path);
+    if (file) {
+        int n;
+        file >> n;
+        while (n--) {
+            string domain;
+            int func_count;
+            file >> domain >> func_count;
+            while (func_count--) {
+                string func_name, line;
+                int line_count;
+                file >> func_name >> line_count;
+                file.ignore();
+                if (!line_count)exit(0);
+                vector<string> desc_lines;
+                while(line_count--) {
+                    getline(file, line);
+                    desc_lines.push_back(line);
+                }
+                ledge[domain].push_back({func_name, desc_lines});
+            }
+        }
+        file.close();
+    }else out("文件打开错误啦！", RED);
+    
+}
+
+void Ready() {
+    inledge();
+    int x = 1;
+    rep(i, 0, 99, 1) {
+        if (func[i] == "min")x = 2;
+        if (func[i] != "")yuan[i] = x;
+    }
+    variables["ans"]="0";
+    cout << "========================================\n"
+         << "|            MathX 2.0 Beta            |\n"
+         << "|      Enter [help] for commands       |\n"
+         << "|          Example: 2sin(pi/4)         |\n"
+         << "========================================\n";
+}
