@@ -2,7 +2,7 @@
 #include "Initial.h"
 
 namespace high_precision_func {
-	long long mul_mod(long long a, long long b, long long mod) {
+	inline long long mul_mod(long long a, long long b, long long mod) {
 	    long long res = 0;
 	    while (b > 0) {
 	        if (b & 1) res = (res + a) % mod;
@@ -13,7 +13,7 @@ namespace high_precision_func {
 	}
 	
 	// Modular exponentiation
-	long long pow_mod(long long a, long long e, long long mod) {
+	inline long long pow_mod(long long a, long long e, long long mod) {
 	    long long res = 1;
 	    while (e > 0) {
 	        if (e & 1) res = mul_mod(res, a, mod);
@@ -24,7 +24,7 @@ namespace high_precision_func {
 	}
 	
 	// Miller-Rabin primality test
-	bool is_prime(long long n) {
+	inline bool is_prime(long long n) {
 	    if (n < 2) return false;
 	    if (n == 2 || n == 3) return true;
 	    if (n % 2 == 0) return false;
@@ -57,7 +57,7 @@ namespace high_precision_func {
 	}
 	
 	// Greatest common divisor
-	long long gcd(long long a, long long b) {
+	inline long long gcd(long long a, long long b) {
 	    while (b != 0) {
 	        long long t = b;
 	        b = a % b;
@@ -67,7 +67,7 @@ namespace high_precision_func {
 	}
 	
 	// Pollard's Rho algorithm with Brent's optimization
-	long long pollards_rho(long long n) {
+	inline long long pollards_rho(long long n) {
 	    if (n % 2 == 0) return 2;
 	    if (n % 3 == 0) return 3;
 	    if (n % 5 == 0) return 5;
@@ -103,7 +103,7 @@ namespace high_precision_func {
 	}
 	
 	// Factorize a number and return prime factors with exponents
-	map<long long, int> factorize(long long n) {
+	inline map<long long, int> factorize(long long n) {
 	    map<long long, int> factors;
 	    
 	    if (n == 1) return factors;
@@ -124,7 +124,7 @@ namespace high_precision_func {
 	}
 	
 	// Helper function to format the factorization as a string
-	string format_factorization(const map<long long, int>& factors) {
+	inline string format_factorization(const map<long long, int>& factors) {
 	    string result;
 	    bool first = true;
 	    
@@ -143,8 +143,8 @@ namespace high_precision_func {
 	    
 	    return result;
 	}
-	
-	bool is_prime(u64 n) {
+
+	inline bool is_prime(u64 n) {
 		if (n < 2 || n % 6 % 4 != 1 && n % 6 % 4 != 5)
 			return n == 2 || n == 3;
 		u64 d = n - 1, s = 0;
@@ -165,11 +165,13 @@ namespace high_precision_func {
 	}
 	string add(string a, string b);
 	string sub(string a, string b);
-	string trim_zeros(const string &s) {
+
+	inline string trim_zeros(const string &s) {
 		auto pos = s.find_first_not_of('0');
 		return (pos == string::npos) ? "0" : s.substr(pos);
 	}
-	string add(string a, string b) {
+
+	inline string add(string a, string b) {
 		bool a_neg = (a[0] == '-');
 		bool b_neg = (b[0] == '-');
 		if (a_neg && b_neg) return "-" + add(a.substr(1), b.substr(1));
@@ -189,7 +191,8 @@ namespace high_precision_func {
 		reverse(res.begin(), res.end());
 		return trim_zeros(res);
 	}
-	string sub(string a, string b) {
+
+	inline string sub(string a, string b) {
 		bool a_neg = (a[0] == '-');
 		bool b_neg = (b[0] == '-');
 		if (a_neg && b_neg) return sub(b.substr(1), a.substr(1));
@@ -220,7 +223,7 @@ namespace high_precision_func {
 		return is_negative ? "-" + res : res;
 	}
 
-	string div(string a, string b) {
+	inline string div(string a, string b) {
 		if (b == "0") throw runtime_error("Division by zero");
 		bool neg = (a[0] == '-') ^ (b[0] == '-');
 		string a_abs = (a[0] == '-') ? a.substr(1) : a;
@@ -248,7 +251,7 @@ namespace high_precision_func {
 
 	const double MM_PI = acos(-1.0);
 
-	void parallel_fft(vector<complex<double>>& a, bool invert) {
+	inline void parallel_fft(vector<complex<double>>& a, bool invert) {
 		int n = a.size();
 		if (n == 1) return;
 		vector<complex<double>> a0(n / 2), a1(n / 2);
@@ -273,7 +276,8 @@ namespace high_precision_func {
 			w *= wn;
 		}
 	}
-	string mul(string num1, string num2) {
+
+	inline string mul(string num1, string num2) {
 		bool negative = false;
 		if (num1[0] == '-') {
 			negative = !negative;
@@ -327,7 +331,7 @@ namespace high_precision_func {
 		return res;
 	}
 
-	string pow(string base, string exponent) {
+	inline string pow(string base, string exponent) {
 		string res = "1";
 		while (exponent != "0") {
 			if ((exponent.back() - '0') % 2 == 1) res = mul(res, base);
@@ -338,8 +342,8 @@ namespace high_precision_func {
 	}
 }
 
-string high_precision_calc(string str) {
-	str = NS(str);
+inline string high_precision_calc(string str) {
+	str = ns(str);
 	stack<string> st;
 	queue<string> q;
 	ll i = 0;
@@ -442,3 +446,4 @@ string high_precision_calc(string str) {
 	}
 	return stk.top();
 }
+

@@ -106,7 +106,7 @@ extern vector<node> history;
 
 unordered_map<string, pair<string,string> > deffunc;
 
-int prio(string c) {
+inline int prio(string c) {
     if (c == "+" || c == "-") return 1;
     if (c == "*" || c == "/") return 2;
     if (c == "^" || c == "%") return 3;
@@ -116,7 +116,7 @@ int prio(string c) {
     return 0;
 }
 
-inline string NS(string expr) {
+inline string ns(string expr) {
     string result;
     int len = expr.length();
     rep(i,0,len-1,1) {
@@ -202,11 +202,11 @@ inline string NS(string expr) {
     return final;
 }
 
-void out(string str, string color) {
+inline void out(string str, string color) {
     cout << color << str << RESET;
 }
 
-void inledge() {
+inline void inledge() {
     ledge.clear();
     string path;
     if (lagg == 1)path = "knowledge_en.txt";
@@ -235,11 +235,10 @@ void inledge() {
             }
         }
         file.close();
-    }else out("文件打开错误啦！", RED);
-    
+    }
 }
 
-void Ready() {
+inline void Ready() {
     inledge();
     int x = 1;
     rep(i, 0, 99, 1) {

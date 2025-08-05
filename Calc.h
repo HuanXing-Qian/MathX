@@ -3,8 +3,8 @@
 #include "Initial.h"
 #include "high_precision.h"
 
-ld calc(string str) {
-	str = NS(str);
+inline ld calc(string str) {
+	str = ns(str);
 //	cout<<str<<endl;
 	stack<string> st;
 	queue<string> q;
@@ -246,11 +246,135 @@ ld calc(string str) {
 	return stk.top();
 }
 
-ld diff(string func, ld x, string var_name){
-	auto f = [&](ld x) { 
-		variables[var_name] = to_string(x);
+inline ld diff(const string& func, const ld x, const string& var_name){
+	auto f = [&](ld y) { 
+		variables[var_name] = to_string(y);
 		return calc(func); 
 	};
 	ld h = 1e-6;
 	return (f(x+h)-f(x-h))/(2*h);
+}
+
+inline void big_pow(const string& str)
+{
+	istringstream iss(str);
+	string cmd;
+	string qw,qe;
+	long double base, exponent;
+	iss >> cmd >> qw >> qe;
+	base=calc(qw), exponent = calc(qe);
+	auto start = chrono::high_resolution_clock::now();
+	long double logBase = log10l(base);
+	long double logResult = exponent * logBase;
+	long double B_float = floorl(logResult);
+	ll B = static_cast<ll>(B_float);
+	long double A = powl(10.0L, logResult - B_float);
+	if (A >= 10.0L) {
+		A /= 10.0L;
+		B += 1;
+	}
+
+	if (A < 1.0L) {
+		A *= 10.0L;
+		B -= 1;
+	}
+
+	ll win = 1, a = static_cast<ll>(base), b = static_cast<ll>(exponent);
+	ll mod = 1000000000000000000LL;
+	a %= mod;
+
+	auto mod_mul = [mod](ll x, ll y) -> ll {
+		x %= mod;
+		y %= mod;
+		ll res = 0;
+		while (y > 0) {
+			if (y & 1)
+				res = (res + x) % mod;
+			x = (x * 2) % mod;
+			y >>= 1;
+		}
+		return res;
+	};
+
+	while (b > 0) {
+		if (b & 1)
+			win = mod_mul(win, a);
+		a = mod_mul(a, a);
+		b >>= 1;
+	}
+
+	auto end = chrono::high_resolution_clock::now();
+	auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
+	cout << fixed << setprecision(baoliu) << A << "e" << B << "\n";
+	cout << "最后几位数字：" << win << "\n";
+	if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
+}
+
+inline string integral_calc(string& str, const string& var_name)
+{
+	str=ns(str);
+	stack<string> st;
+	queue<string> q;
+	ll i=0;
+	while (i<str.length())
+	{
+		string token;
+		while (i<str.length() && str[i] != ' ') token += str[i++];
+		
+		if (token.empty()) {
+			i++;
+			continue;
+		}
+		if (token == var_name) st.push(token);
+		else if (variables.find(token) != variables.end()) q.push(variables[token]);
+		else if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1])))q.push(token);
+		else if (prio(token) == 4 || prio(token) == 6) st.push(token);
+		else if (token == "^" || token == "%") {
+			while (!st.empty() && st.top() != "(" && prio(token) < prio(st.top())) {
+				q.push(st.top());
+				st.pop();
+			}
+			st.push(token);
+		} else if (token == "+" || token == "-" || token == "*" || token == "/") {
+			while (!st.empty() && st.top() != "(" && prio(token) <= prio(st.top())) {
+				q.push(st.top());
+				st.pop();
+			}
+			st.push(token);
+		} else if (prio(token) == 5) q.push(constants.at(token));
+		else if (token[0] == '-' && prio(token.substr(1)) == 5) {
+			string const_name = token.substr(1);
+			q.push("-" + constants.at(const_name));
+		} else if (token == "(") st.push(token);
+		else if (token == ")") {
+			while (!st.empty() && st.top() != "(") {
+				q.push(st.top());
+				st.pop();
+			}
+			if (!st.empty() && st.top() == "(") st.pop();
+			if (!st.empty() && prio(st.top()) == 4) {
+				q.push(st.top());
+				st.pop();
+			}
+		} else {
+			if (lagg == 1)out("Expression error.\n", RED);
+			else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
+			else if (lagg == 3)out("Ошибка выражения.\n", RED);
+			return "";
+		}
+		i++;
+	}
+	while (!st.empty())
+	{
+		q.push(st.top());
+		st.pop();
+	}
+	auto nq=q;
+	while (!nq.empty())
+	{
+		cout<<nq.front()<<" ";
+		nq.pop();
+	}
+	cout<<"\n";
+	return "";
 }

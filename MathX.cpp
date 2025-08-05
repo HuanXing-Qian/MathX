@@ -1,6 +1,6 @@
 // Developers: Shi Yuze
 #pragma GCC optimize("O3,unroll-loops")
-#define CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include "Initial.h"
 #include "Calc.h"
 #include "high_precision.h"
@@ -81,7 +81,7 @@ static bool chao(string str) {
 	if (str.rfind("factor") == 0) {
 		str.erase(0, 7);
 		if (!str.empty()) {
-			ll n = stoll(str);
+			ll n = ll(calc(str));
 			if (n <= 1) {
 				cout << "请输入大于1的正整数" << "\n";
 				return 0;
@@ -96,79 +96,117 @@ static bool chao(string str) {
 	if (str.rfind("def")==0){
 	    str.erase(0,4);
 	    if(!str.empty()){
-	        istringstream iss(str);
-	        string var_name, func_name, func;
-	        iss >> func_name >> var_name;
-	        if(func_name.empty() || var_name.empty()) {
-	            out("Invalid function definition syntax.\n", RED);
-	            return 0;
-	        }
-	        getline(iss, func);
-	        func.erase(0, func.find_first_not_of(" \t"));
-	        func.erase(func.find_last_not_of(" \t") + 1);
-	        
-	        str = NS(func);
-	        stack<string> st;
-			queue<string> q;
-			ll i = 0;
-	        while (i < str.size()) {
-				string token;
-				while (i < str.size() && str[i] != ' ') {
-					token += str[i];
-					i++;
-				}
+	    	istringstream iss(str);
+	    	string var_name, func_name, func;
+	    	iss >> func_name >> var_name;
+	    	if (func_name.empty() || var_name.empty()) {
+	    		out("Invalid function definition syntax.\n", RED);
+	    		return 0;
+	    	}
+	    	getline(iss, func);
+	    	func.erase(0, func.find_first_not_of(" \t"));
+	    	func.erase(func.find_last_not_of(" \t") + 1);
+
+	    	// 保存旧值（如果存在）
+	    	string old_value;
+	    	bool var_existed = (variables.find(var_name) != variables.end());
+	    	if (var_existed) old_value = variables[var_name];
+
+	    	variables[var_name] = "0"; 
+	        bool f=1;
+	    	str = ns(func);
+	    	stack<string> st;
+	    	queue<string> q;
+	    	ll i = 0;
+	    	while (i < str.size())
+	    	{
+	    		string token;
+	    		while (i < str.size() && str[i] != ' ') {
+	    			token += str[i];
+	    			i++;
+	    		}
 		
-				if (token.empty()) {
-					i++;
-					continue;
-				}
+	    		if (token.empty()) {
+	    			i++;
+	    			continue;
+	    		}
 				
-				if (variables.find(token) != variables.end() || token == var_name) q.push(variables[token]);
-				else if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1])))q.push(token);
-				else if (prio(token) == 4 || prio(token) == 6) st.push(token);
-				else if (token == "^" || token == "%") {
-					while (!st.empty() && st.top() != "(" && prio(token) < prio(st.top())) {
-						q.push(st.top());
-						st.pop();
-					}
-					st.push(token);
-				} else if (token == "+" || token == "-" || token == "*" || token == "/") {
-					while (!st.empty() && st.top() != "(" && prio(token) <= prio(st.top())) {
-						q.push(st.top());
-						st.pop();
-					}
-					st.push(token);
-				} else if (prio(token) == 5) q.push(constants.at(token));
-				else if (token[0] == '-' && prio(token.substr(1)) == 5) {
-					string const_name = token.substr(1);
-					q.push("-" + constants.at(const_name));
-				} else if (token == "(") st.push(token);
-				else if (token == ")") {
-					while (!st.empty() && st.top() != "(") {
-						q.push(st.top());
-						st.pop();
-					}
-					if (!st.empty() && st.top() == "(") st.pop();
-					if (!st.empty() && prio(st.top()) == 4) {
-						q.push(st.top());
-						st.pop();
-					}
-				} else {
-					if (lagg == 1)out("Expression error.\n", RED);
-					else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
-					else if (lagg == 3)out("Ошибка выражения.\n", RED);
-					return 0;
-				}
-				i++;
-			}
-	        deffunc[func_name] = {var_name, func};
-	        cout << func_name << "(" << var_name << ") = " << func << endl;
+	    		if (variables.find(token) != variables.end() || token == var_name) q.push(variables[token]);
+	    		else if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1])))q.push(token);
+	    		else if (prio(token) == 4 || prio(token) == 6) st.push(token);
+	    		else if (token == "^" || token == "%") {
+	    			while (!st.empty() && st.top() != "(" && prio(token) < prio(st.top())) {
+	    				q.push(st.top());
+	    				st.pop();
+	    			}
+	    			st.push(token);
+	    		} else if (token == "+" || token == "-" || token == "*" || token == "/") {
+	    			while (!st.empty() && st.top() != "(" && prio(token) <= prio(st.top())) {
+	    				q.push(st.top());
+	    				st.pop();
+	    			}
+	    			st.push(token);
+	    		} else if (prio(token) == 5) q.push(constants.at(token));
+	    		else if (token[0] == '-' && prio(token.substr(1)) == 5) {
+	    			string const_name = token.substr(1);
+	    			q.push("-" + constants.at(const_name));
+	    		} else if (token == "(") st.push(token);
+	    		else if (token == ")") {
+	    			while (!st.empty() && st.top() != "(") {
+	    				q.push(st.top());
+	    				st.pop();
+	    			}
+	    			if (!st.empty() && st.top() == "(") st.pop();
+	    			if (!st.empty() && prio(st.top()) == 4) {
+	    				q.push(st.top());
+	    				st.pop();
+	    			}
+	    		} else f=0;
+	    	}
+	    	if (!f)
+	    	{
+	    		if (var_existed) variables[var_name] = old_value;
+	    		else variables.erase(var_name);
+	    		return 0;
+	    	}
+	    	deffunc[func_name] = {var_name, func};
+	    	if (var_existed) variables[var_name] = old_value;
+	    	else variables.erase(var_name);
+
+	    	cout << func_name << "(" << var_name << ") = " << func << endl;
 	    }
 	    return 0;
 	}
+
+	/*if (str.rfind("int")==0)
+	{
+		str.erase(0,4);
+		if (!str.empty())
+		{
+			istringstream iss(str);
+			string var_name, func_name, func;
+			iss >> func_name >> var_name;
+			if (func_name.empty() || var_name.empty())
+			{
+				out("你输入错了。\n", RED);
+				return 0;
+			}
+			if (var_name.size()>1)
+			{
+				out("变量名必须是一个字母！\n",RED);
+				return 0;
+			}
+			getline(iss, func);
+			func.erase(0, func.find_first_not_of(" \t"));
+			func.erase(func.find_last_not_of(" \t") + 1);
+			deffunc[func_name] = {var_name, integral_calc(func,var_name)};
+			cout << "Integral: " << deffunc[func_name].second << "\n";
+			return 0;
+		}
+	}*/
 	
 	if (str.rfind("int")==0){
-		int n = 1000;
+		int n = 5000;
 		str.erase(0,4);
 		if(!str.empty()){
 			istringstream iss(str);
@@ -205,7 +243,7 @@ static bool chao(string str) {
 				if (f(x)>0&&f(x+h)<0||f(x)<0&&f(x+h)>0)fx=0;
 			    sum += i&1 ? 4*fx : 2*fx;
 			}
-			cout << "Result: " << fixed << setprecision(preci) << huo*sum*h/3 << "\n";
+			cout << "Result: " << huo*sum*h/3 << "\n";
 			variables["ans"] = to_string(sum*h/3);
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -275,6 +313,7 @@ static bool chao(string str) {
 		ld ans=0;
 		rep(i,minn,maxn,1)ans+=f(i);
 		cout << "Result: " << fixed << setprecision(preci) << ans << "\n";
+		variables["ans"]=to_string(ans);
 		auto end = chrono::high_resolution_clock::now();
 		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 		if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
@@ -325,11 +364,12 @@ static bool chao(string str) {
 		else variables.erase(var_name);
 		return 0;
 	}
+
 	if (str.rfind("solve") == 0) {
 	    str.erase(0, 6);
 	    if (!str.empty()) {
-		    constexpr ld eps = 1e-6;
-	        constexpr int max_iter = 100;
+		    constexpr ld eps = 1e-8;
+	        constexpr int max_iter = 500;
 	        
 	        istringstream iss(str);
 	        string var_name, x0_str, func;
@@ -410,58 +450,9 @@ static bool chao(string str) {
 		science = 0;
 		return 0;
 	}
+	
 	if (str.find("pow ") == 0) {
-		istringstream iss(str);
-		string cmd;
-		string qw,qe;
-		long double base, exponent;
-		iss >> cmd >> qw >> qe;
-		base=calc(qw), exponent = calc(qe);
-		auto start = chrono::high_resolution_clock::now();
-		long double logBase = log10l(base);
-		long double logResult = exponent * logBase;
-		long double B_float = floorl(logResult);
-		ll B = static_cast<ll>(B_float);
-		long double A = powl(10.0L, logResult - B_float);
-		if (A >= 10.0L) {
-			A /= 10.0L;
-			B += 1;
-		}
-
-		if (A < 1.0L) {
-			A *= 10.0L;
-			B -= 1;
-		}
-
-		ll win = 1, a = static_cast<ll>(base), b = static_cast<ll>(exponent);
-		ll mod = 1000000000000000000LL;
-		a %= mod;
-
-		auto mod_mul = [mod](ll x, ll y) -> ll {
-			x %= mod;
-			y %= mod;
-			ll res = 0;
-			while (y > 0) {
-				if (y & 1)
-					res = (res + x) % mod;
-				x = (x * 2) % mod;
-				y >>= 1;
-			}
-			return res;
-		};
-
-		while (b > 0) {
-			if (b & 1)
-				win = mod_mul(win, a);
-			a = mod_mul(a, a);
-			b >>= 1;
-		}
-
-		auto end = chrono::high_resolution_clock::now();
-		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
-		cout << fixed << setprecision(baoliu) << A << "e" << B << "\n";
-		cout << "最后几位数字：" << win << "\n";
-		if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
+		big_pow(str);
 		return 0;
 	}
 
@@ -848,7 +839,7 @@ static bool chao(string str) {
 	return 1;
 }
 
-void run() {
+inline void run() {
 	cout << ">> " << flush;
 	string str;
 	//	cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -917,5 +908,4 @@ int main() {
 	cout.tie(0);
 	Ready();
 	while (1) run();
-	return 0;
 }
