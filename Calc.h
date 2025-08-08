@@ -1,7 +1,9 @@
 ﻿#pragma once
-
 #include "Initial.h"
 #include "high_precision.h"
+#include <cmath>
+#include<stack>
+#include<queue>
 
 inline ld calc(string str) {
 	str = ns(str);
@@ -47,7 +49,7 @@ inline ld calc(string str) {
 				else if (lagg == 3) out("Ошибка: точность превышает пределы long double.\n", RED);
 				return 0;
 			}
-			preci = sum;
+			precision = sum;
 			return 0;
 		}
 
@@ -95,7 +97,7 @@ inline ld calc(string str) {
 		st.pop();
 	}
 
-	if (RPN) {
+	if (rpn) {
 		cout << "RPN: ";
 		auto newq = q;
 		while (!newq.empty()) {
@@ -251,7 +253,7 @@ inline ld diff(const string& func, const ld x, const string& var_name){
 		variables[var_name] = to_string(y);
 		return calc(func); 
 	};
-	ld h = 1e-6;
+	ld h = 5e-7;
 	return (f(x+h)-f(x-h))/(2*h);
 }
 
@@ -377,4 +379,202 @@ inline string integral_calc(string& str, const string& var_name)
 	}
 	cout<<"\n";
 	return "";
+}
+
+inline cld operator+(const cld& cldh, const ld rhs)
+{
+	return cldh+cld(rhs);	
+}
+
+inline cld complex_gamma(cld z) {
+	if (z.imag()==0) return tgamma(z.real());
+	
+	constexpr ld g = 7.0L;
+	constexpr ld sqrt_2_pi = 2.506628274631000502415765284811L;
+    
+	static constexpr ld p[] = {
+		0.99999999999980993L,
+		676.5203681218851L,
+		-1259.1392167224028L,
+		771.32342877765313L,
+		-176.61502916214059L,
+		12.507343278686905L,
+		-0.13857109526572012L,
+		9.9843695780195716e-6L,
+		1.5056327351493116e-7L
+	};
+    
+	if (z.real() <= 0.5L) return PI / (sin(PI * z) * complex_gamma(cld(1.0L) - z));
+
+	z -= 1.0L;
+	cld x = p[0];
+	for (int i = 1; i < 9; ++i) x += p[i] / (z + cld(i, 0));
+    
+	cld t = z + g + 0.5L;
+	return sqrt_2_pi * pow(t, z + 0.5L) * exp(-t) * x;
+}
+
+inline cld complex_calc(string str)
+{
+	str=ns(str);
+	stack<string> st;
+	queue<string> q;
+	ll i=0;
+	while (i<str.length())
+	{
+		string token;
+		while (i<str.length() && str[i] != ' ') token += str[i++];
+		if (token.empty())
+		{
+			i++;
+			continue;
+		}
+		if (variables.find(token) != variables.end()) q.push(token);
+		else if (isdigit(token[0])|| (token[0] == '-' && isdigit(token[1]))||token=="i")q.push(token);
+		else if (prio(token) == 4) st.push(token);
+		else if (token == "^") {
+			while (!st.empty() && st.top() != "(" && prio(token) < prio(st.top())) {
+				q.push(st.top());
+				st.pop();
+			}
+			st.push(token);
+		} else if (token == "+" || token == "-" || token == "*" || token == "/") {
+			while (!st.empty() && st.top() != "(" && prio(token) <= prio(st.top())) {
+				q.push(st.top());
+				st.pop();
+			}
+			st.push(token);
+		} else if (prio(token) == 5) q.push(constants.at(token));
+		else if (token[0] == '-' && prio(token.substr(1)) == 5) {
+			string const_name = token.substr(1);
+			q.push("-" + constants.at(const_name));
+		} else if (token == "(") st.push(token);
+		else if (token == ")") {
+			while (!st.empty() && st.top() != "(") {
+				q.push(st.top());
+				st.pop();
+			}
+			if (!st.empty() && st.top() == "(") st.pop();
+			if (!st.empty() && prio(st.top()) == 4) {
+				q.push(st.top());
+				st.pop();
+			}
+		}
+		else {
+			if (lagg == 1)out("Expression error.\n", RED);
+			else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
+			else if (lagg == 3)out("Ошибка выражения.\n", RED);
+			return 0;
+		}
+		i++;
+	}
+	while (!st.empty())
+	{
+		q.push(st.top());
+		st.pop();
+	}
+	if (rpn)
+	{
+		cout<<"RPN: ";
+		auto nq = q;
+		while (!nq.empty())
+		{
+			cout<<nq.front()<<" ";
+			nq.pop();
+		}
+		cout<<"\n";
+	}
+	stack<cld> stk;
+	while (!q.empty())
+	{
+		string token = q.front();
+		q.pop();
+		if (isdigit(token[0])|| (token[0] == '-' && isdigit(token[1])) || token=="i")
+		{
+			cld n;
+			if (token=="i")n.imag(1);
+			else n.real(stold(token));
+			stk.push(n);
+		}
+		else if (prio(token)<4)
+		{
+			if (stk.size() < 2) {
+				if (lagg == 1)out("Error: Insufficient " + token + " operators.\n", RED);
+				else if (lagg == 2)out("没有足够的" + token + "操作数，即有左没右或者反之。\n", RED);
+				else if (lagg == 3)out("Ошибка: не хватает операторов " + token + " для выполнения операции.\n", RED);
+				return 0;
+			}
+			cld r=stk.top();
+			stk.pop();
+			cld l=stk.top();
+			stk.pop();
+			cld result;
+			if (token == "+") result = l + r;
+			else if (token == "-") result = l - r;
+			else if (token == "*") result = l * r;
+			else if (token == "/") {
+				if (r.imag() == 0&&r.real()==0) {
+					out("inf\n", YELLOW);
+					return 0;
+				}
+				result = l / r;
+			} else if (token == "^") result = pow(l, r);
+			stk.push(result);
+		}
+		else if (prio(token)==4)
+		{
+			if (stk.empty()) {
+				out("No " + token + " function.\n", RED);
+				return 0;
+			}
+			cld res;
+			int index = distance(begin(func), find(begin(func), end(func), token));
+			if (yuan[index]==1)
+			{
+				cld z = stk.top();
+				stk.pop();
+				if (token=="sin")res = sin(z);
+				else if (token=="cos")res = cos(z);
+				else if (token=="tan")res = tan(z);
+				else if (token=="arcsin")res = asin(z);
+				else if (token=="arccos")res = acos(z);
+				else if (token=="arctan")res = atan(z);
+				else if (token=="sinh")res = sinh(z);
+				else if (token=="cosh")res = cosh(z);
+				else if (token=="tanh")res = tanh(z);
+				else if (token=="sqrt")res = sqrt(z);
+				else if (token=="exp")res = exp(z);
+				else if (token=="log"||token=="ln")res = log(z);
+				else if (token=="log10")res = log10(z);
+				else if (token=="abs")res = abs(z);
+				else if (token=="sinc")res = (z.imag()==0&&z.real()==0) ? cld(1) : sin(z)/z;
+				else if (token=="Gamma")res = complex_gamma(z);
+			}
+			stk.push(res);
+		}else if (prio(token) == 6) {
+			if (stk.empty()) {
+				out("No " + token + " function.\n", RED);
+				return 0;
+			}
+		
+			auto it = deffunc.find(token);
+			if (it == deffunc.end()) {
+				out("Function " + token + " not found.\n", RED);
+				return 0;
+			}
+			const string& var_name = it->second.first; 
+			const string& expr = it->second.second; 
+			cld x = stk.top();
+			stk.pop();
+			string old_value;
+			bool existed = (variables.find(var_name) != variables.end());
+			if (existed) old_value = variables[var_name];
+			variables[var_name] = to_string(x.real())+to_string(x.imag())+'i';
+			cld res = complex_calc(expr);
+			stk.push(res);
+			if (existed)variables[var_name] = old_value;
+			else variables.erase(var_name);
+		}
+	}
+	return stk.top();
 }

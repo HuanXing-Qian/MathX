@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <map>
 #include "Initial.h"
 
 namespace high_precision_func {
@@ -6,13 +7,12 @@ namespace high_precision_func {
 	    long long res = 0;
 	    while (b > 0) {
 	        if (b & 1) res = (res + a) % mod;
-	        a = (a * 2) % mod;
+	        a = a * 2 % mod;
 	        b >>= 1;
 	    }
 	    return res;
 	}
 	
-	// Modular exponentiation
 	inline long long pow_mod(long long a, long long e, long long mod) {
 	    long long res = 1;
 	    while (e > 0) {
@@ -23,7 +23,6 @@ namespace high_precision_func {
 	    return res;
 	}
 	
-	// Miller-Rabin primality test
 	inline bool is_prime(long long n) {
 	    if (n < 2) return false;
 	    if (n == 2 || n == 3) return true;
@@ -56,7 +55,6 @@ namespace high_precision_func {
 	    return true;
 	}
 	
-	// Greatest common divisor
 	inline long long gcd(long long a, long long b) {
 	    while (b != 0) {
 	        long long t = b;
@@ -66,7 +64,6 @@ namespace high_precision_func {
 	    return a;
 	}
 	
-	// Pollard's Rho algorithm with Brent's optimization
 	inline long long pollards_rho(long long n) {
 	    if (n % 2 == 0) return 2;
 	    if (n % 3 == 0) return 3;
@@ -84,7 +81,7 @@ namespace high_precision_func {
 	        
 	        if (c == 0 || c == 2) c = 1;
 	
-	        auto f = [&](long long x) { return (mul_mod(x, x, n) + c) % n; };
+	        auto f = [&](const long long de) { return (mul_mod(de, de, n) + c) % n; };
 	
 	        int power = 1, lam = 1;
 	        while (d == 1) {
@@ -102,7 +99,6 @@ namespace high_precision_func {
 	    }
 	}
 	
-	// Factorize a number and return prime factors with exponents
 	inline map<long long, int> factorize(long long n) {
 	    map<long long, int> factors;
 	    
@@ -116,14 +112,12 @@ namespace high_precision_func {
 	    auto factors1 = factorize(d);
 	    auto factors2 = factorize(n / d);
 	    
-	    // Merge the two factor maps
 	    for (auto& p : factors1) factors[p.first] += p.second;
 	    for (auto& p : factors2) factors[p.first] += p.second;
 	    
 	    return factors;
 	}
 	
-	// Helper function to format the factorization as a string
 	inline string format_factorization(const map<long long, int>& factors) {
 	    string result;
 	    bool first = true;
@@ -196,8 +190,8 @@ namespace high_precision_func {
 		bool a_neg = (a[0] == '-');
 		bool b_neg = (b[0] == '-');
 		if (a_neg && b_neg) return sub(b.substr(1), a.substr(1));
-		else if (a_neg) return "-" + add(a.substr(1), b);
-		else if (b_neg) return add(a, b.substr(1));
+		if (a_neg) return "-" + add(a.substr(1), b);
+		if (b_neg) return add(a, b.substr(1));
 
 		bool is_negative = false;
 		if (a.size() < b.size() || (a.size() == b.size() && a < b)) {
@@ -249,7 +243,7 @@ namespace high_precision_func {
 		return neg ? "-" + quotient : quotient;
 	}
 
-	const double MM_PI = acos(-1.0);
+	const double mm_pi = acos(-1.0);
 
 	inline void parallel_fft(vector<complex<double>>& a, bool invert) {
 		int n = a.size();
@@ -263,7 +257,7 @@ namespace high_precision_func {
 		parallel_fft(a0, invert);
 		parallel_fft(a1, invert);
 
-		double ang = 2 * MM_PI / n * (invert ? -1 : 1);
+		double ang = 2 * mm_pi / n * (invert ? -1 : 1);
 		complex<double> w(1), wn(cos(ang), sin(ang));
 
 		for (int i = 0; i < n / 2; ++i) {
@@ -313,7 +307,7 @@ namespace high_precision_func {
 		vector<int> result(n);
 		int carry = 0;
 		for (int i = 0; i < n; ++i) {
-			int value = (int)round(fa[i].real()) + carry;
+			const int value = static_cast<int>(round(fa[i].real())) + carry;
 			result[i] = value % 10;
 			carry = value / 10;
 		}
@@ -396,7 +390,7 @@ inline string high_precision_calc(string str) {
 		st.pop();
 	}
 
-	if (RPN) {
+	if (rpn) {
 		cout << "RPN: ";
 		auto newq = q;
 		while (!newq.empty()) {

@@ -1,4 +1,4 @@
-这次就直接报MathX2.0Beta的功能了，多了超多
+这次就直接报ShiCalc2.0Beta的功能了，多了超多
 
 首先，是基础计算功能，支持36个函数，分别是：
 `sqrt`, `sin`, `cos`, `tan`, `log`/`ln`, `exp`, `exp2`, `log10`, `log2`，`arcsin`, `arccos`, `arctan`, `sinh`, `cosh`, `tanh`, `ceil`（向上取整）, `floor`（向下取整）, `round`（四舍五入）, `abs`（绝对值）, `erf`, `Gamma`, `sinc`(sinx/x), `lngamma`(lnGamma), `atr`（角度转弧度）, `rta`（弧度转角度）, `prime`（求第x个素数）, `isprime`（判断整数x是否是素数）, `min(x,y)`（求min(x,y)）, `max(x,y)`(求max(x,y)), `arctan2(x,y)`(求象限的正切，用于极坐标), `gcd(a,b)`（求a和b的最大公因数）, `lcm(a,b)`（求a和b的最小公倍数），`hypot(x,y)`（求两边为x、y的斜边的直角三角形），`C(a,b)`（求组合数），`rand(a,b)`（求a到b区间内的随机整数）
@@ -33,3 +33,4 @@
 - language [language] 切换界面语言，支持[en|zh|ru]，在某些隐秘的地方只支持zh
 - study know 展示know的知识点，提供拼写错误提供建议系统，如果know为空就展示所有领域
 - search domain 展示domain中的所有知识的标题
+最近2025年8月8日我又添加了非常好的一个功能——复数，输入`complex`或者`complex on`就可以打开，在该模式下你可以使用复数运算，支持了普通计算的大部分功能，如`sin`,`cos`,`tan`等，一些比大小、整数函数就不支持，因为根本就支持不了。

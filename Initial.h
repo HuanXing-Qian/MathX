@@ -1,15 +1,13 @@
 ﻿#pragma once
 
 #include <iostream>
-#include <cmath>
+#include <stack>
+#include <queue>
 #include <vector>
 #include <unordered_map>
 #include <string>
 #include <random>
-#include <map>
 #include <complex>
-#include<stack>
-#include<queue>
 #include<fstream>
 #include<chrono>
 #include<iomanip>
@@ -36,14 +34,18 @@ const int INF = 0x3f3f3f3f;
 using ll = long long;
 using ld = long double;
 using u64 = uint64_t;
+using cld = complex<ld>;
 
-ll preci = 10;
+constexpr ld PI = 3.14159265358979323846264338327950288L;
+
+ll precision = 5;
 int lagg = 1;
 int baoliu = 4;
-bool timing = 1;
-bool RPN = 0;
-bool high_precision = 0;
-bool science = 0;
+bool timing = true;
+bool rpn = false;
+bool high_precision = false;
+bool science = false;
+bool complex_mode = false;
 
 const string func[100] = {
     "sqrt",
@@ -106,7 +108,7 @@ extern vector<node> history;
 
 unordered_map<string, pair<string,string> > deffunc;
 
-inline int prio(string c) {
+inline int prio(const string& c) {
     if (c == "+" || c == "-") return 1;
     if (c == "*" || c == "/") return 2;
     if (c == "^" || c == "%") return 3;
@@ -231,7 +233,7 @@ inline void inledge() {
                     getline(file, line);
                     desc_lines.push_back(line);
                 }
-                ledge[domain].push_back({func_name, desc_lines});
+                ledge[domain].emplace_back(func_name, desc_lines);
             }
         }
         file.close();
@@ -243,7 +245,7 @@ inline void Ready() {
     int x = 1;
     rep(i, 0, 99, 1) {
         if (func[i] == "min")x = 2;
-        if (func[i] != "")yuan[i] = x;
+        if (!func[i].empty())yuan[i] = x;
     }
     variables["ans"]="0";
     cout << "========================================\n"

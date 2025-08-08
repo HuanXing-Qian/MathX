@@ -1,12 +1,28 @@
 // Developers: Shi Yuze
 #pragma GCC optimize("O3,unroll-loops")
 #define _CRT_SECURE_NO_WARNINGS
-#include "Initial.h"
 #include "Calc.h"
-#include "high_precision.h"
 vector<node>history;
 
 static bool chao(string str) {
+	if (str=="complex"||str=="complex on")
+	{
+		complex_mode = true;
+		if (lagg==1)out("Complex mode on.\n",GREEN);
+		else if (lagg==2)out("复数模式已开启。\n",GREEN);
+		else if (lagg==3)out("Режим множественного числа включен.\n",GREEN);
+		return false;
+	}
+
+	if (str=="complex off")
+	{
+		complex_mode = 0;
+		if (lagg==1)out("Complex mode off.\n","\033[90m");
+		else if (lagg==2)out("复数模式已关闭。\n","\033[90m");
+		else if (lagg==3)out("Система множественных чисел отключена.\n","\033[90m");
+		return false;
+	}
+	
 	if (str.rfind("study", 0) == 0) {
 		string func_name = str.substr(5);
 		if (func_name.empty()) {
@@ -275,7 +291,7 @@ static bool chao(string str) {
 			if(variables.find(var_name)!=variables.end())bl = variables[var_name], bao=1;
 			auto start = chrono::high_resolution_clock::now();
 			ld sum=diff(func, x, var_name);
-			cout << "Result: " << fixed << setprecision(preci) << sum << "\n";
+			cout << "Result: " << fixed << setprecision(precision) << sum << "\n";
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
@@ -312,7 +328,7 @@ static bool chao(string str) {
 		};
 		ld ans=0;
 		rep(i,minn,maxn,1)ans+=f(i);
-		cout << "Result: " << fixed << setprecision(preci) << ans << "\n";
+		cout << "Result: " << fixed << setprecision(precision) << ans << "\n";
 		variables["ans"]=to_string(ans);
 		auto end = chrono::high_resolution_clock::now();
 		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -426,7 +442,7 @@ static bool chao(string str) {
 	        if (lagg == 1) cout << "Solution: ";
 	        else if (lagg == 2) cout << "解：";
 	        else if (lagg == 3) cout << "Решение: ";
-	        cout << fixed << setprecision(preci) << x0 << "\n";
+	        cout << fixed << setprecision(precision) << x0 << "\n";
 
 	        if (var_existed) variables[var_name] = old_value;
 	        else variables.erase(var_name);
@@ -522,7 +538,7 @@ static bool chao(string str) {
 
 		for (size_t i = 0; i < history.size(); ++i) {
 			outFile << i + 1 << ". " << history[i].in << " = "
-			        << fixed << setprecision(preci) << history[i].result << endl;
+			        << fixed << setprecision(precision) << history[i].result << endl;
 		}
 
 		outFile.close();
@@ -767,7 +783,7 @@ static bool chao(string str) {
 	}
 
 	if (str == "rpn on" || str == "RPN on" || str == "rpn") {
-		RPN = 1;
+		rpn = 1;
 		if (lagg == 1)out("Enable RPN.\n", CYAN);
 		else if (lagg == 2)out("已开启RPN模式。\n", CYAN);
 		else if (lagg == 3)out("RPN включён.\n", CYAN);
@@ -775,7 +791,7 @@ static bool chao(string str) {
 	}
 
 	if (str == "rpn off" || str == "RPN off") {
-		RPN = 0;
+		rpn = 0;
 		if (lagg == 1)out("RPN disabled.\n", "\033[90m");
 		else if (lagg == 2)out("已关闭RPN模式。\n", "\033[90m");
 		else if (lagg == 3)out("RPN отключён.\n", "\033[90m");
@@ -839,38 +855,37 @@ static bool chao(string str) {
 	return 1;
 }
 
-inline void run() {
+static void run() {
 	cout << ">> " << flush;
 	string str;
-	//	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	getline(cin, str);
 
 	if (!chao(str))return;
 
-	bool f = 1;
-	for (char c : str) {
+	bool f = true;
+	for (const char c : str) {
 		if (isalpha(c) || isdigit(c)) {
-			f = 0;
+			f = false;
 			break;
 		}
 	}
 	if (f)return;
 
-	auto start = chrono::high_resolution_clock::now();
+	const auto start = chrono::high_resolution_clock::now();
 
-	if (!high_precision) {
+	if (!high_precision&&!complex_mode) {
 		ld result = calc(str);
 		auto end = chrono::high_resolution_clock::now();
 		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 		if (lagg == 1)cout << "Result = ";
 		else if (lagg == 2)cout << "结果 = ";
 		else if (lagg == 3)cout << "Результат = ";
-		cout << fixed << setprecision(preci) << result << "\n";
+		cout << fixed << setprecision(precision) << result << "\n";
 		//        cout << result << endl;
 		history.push_back({str, to_string(result)});
 		variables["ans"] = to_string(result);
 		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
-	} else {
+	} else if (high_precision) {
 		string result = high_precision_calc(str);
 		auto end = chrono::high_resolution_clock::now();
 		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -899,13 +914,26 @@ inline void run() {
 		}
 
 		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
+	}else if (complex_mode)
+	{
+		cld result = complex_calc(str);
+		auto end = chrono::high_resolution_clock::now();
+		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
+		if (lagg == 1)cout << "Result = ";
+		else if (lagg == 2)cout << "结果 = ";
+		else if (lagg == 3)cout << "Результат = ";
+		cout << fixed << setprecision(precision) << result.real();
+		cout<<(result.imag()<0 ? " - " : " + ")<<abs(result.imag())<<"i\n";
+		history.push_back({str, to_string(result.real())+"+"+to_string(result.imag())+"i"});
+		variables["ans"] = to_string(result.real())+"+"+to_string(result.imag())+"i";
+		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 	}
 }
 
 int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
 	Ready();
-	while (1) run();
+	while (true) run();
 }
