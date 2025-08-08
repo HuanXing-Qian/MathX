@@ -1,4 +1,4 @@
-这次就直接报ShiCalc2.0Beta的功能了，多了超多
+这次就直接报MathX2.0Beta的功能了，多了超多
 
 首先，是基础计算功能，支持36个函数，分别是：
 `sqrt`, `sin`, `cos`, `tan`, `log`/`ln`, `exp`, `exp2`, `log10`, `log2`，`arcsin`, `arccos`, `arctan`, `sinh`, `cosh`, `tanh`, `ceil`（向上取整）, `floor`（向下取整）, `round`（四舍五入）, `abs`（绝对值）, `erf`, `Gamma`, `sinc`(sinx/x), `lngamma`(lnGamma), `atr`（角度转弧度）, `rta`（弧度转角度）, `prime`（求第x个素数）, `isprime`（判断整数x是否是素数）, `min(x,y)`（求min(x,y)）, `max(x,y)`(求max(x,y)), `arctan2(x,y)`(求象限的正切，用于极坐标), `gcd(a,b)`（求a和b的最大公因数）, `lcm(a,b)`（求a和b的最小公倍数），`hypot(x,y)`（求两边为x、y的斜边的直角三角形），`C(a,b)`（求组合数），`rand(a,b)`（求a到b区间内的随机整数）
