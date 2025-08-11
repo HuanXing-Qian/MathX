@@ -11,6 +11,7 @@
 - diff x x0 f(x) 求`f'(x)\mid_x0`
 - sum x a b f(x) 求`\sum_{x=a}^b f(x)`
 - data x a b l f(x) 求[a,b]区间，步长为l中f(x)分别的值。
+- solve x x0 f(x) 求f(x)函数的零点，可以用来解方程（如x^-2x+1=0，但是你要确保右边是0）
 - science 开启科学计数法模式，仅限高精度模式，这里可以选择在后面加一个正整数表示精度
 - science off 关闭科学计数法模式
 - pow a b 求a^b的估算值以及最后18位数字，很快，但是在b比较大时（如9e18）的科学计数法前半部分会出现误差，因为快到上限了
@@ -34,3 +35,5 @@
 - study know 展示know的知识点，提供拼写错误提供建议系统，如果know为空就展示所有领域
 - search domain 展示domain中的所有知识的标题
 最近2025年8月8日我又添加了非常好的一个功能——复数，输入`complex`或者`complex on`就可以打开，在该模式下你可以使用复数运算，支持了普通计算的大部分功能，如`sin`,`cos`,`tan`等，一些比大小、整数函数就不支持，因为根本就支持不了。
+- complex int z a b f(z)，按下回车后继续输入z(t)的参数化的变量名t并输入z(t)的表达式，就可以计算参数化z(t)的复变积分`\int_a^b f(z(t))z'(t) dt`
+- complex diff z z0 f(z)，和实数diff差不多，就是可以支持复数了。
