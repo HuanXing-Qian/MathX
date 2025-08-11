@@ -257,6 +257,8 @@ inline ld diff(const string& func, const ld x, const string& var_name){
 	return (f(x+h)-f(x-h))/(2*h);
 }
 
+
+
 inline void big_pow(const string& str)
 {
 	istringstream iss(str);
@@ -429,9 +431,9 @@ inline cld complex_calc(string str)
 			i++;
 			continue;
 		}
-		if (variables.find(token) != variables.end()) q.push(token);
+		if (complex_variables.find(token) != complex_variables.end())q.push(token);
 		else if (isdigit(token[0])|| (token[0] == '-' && isdigit(token[1]))||token=="i")q.push(token);
-		else if (prio(token) == 4) st.push(token);
+		else if (prio(token) == 4||prio(token)==6) st.push(token);
 		else if (token == "^") {
 			while (!st.empty() && st.top() != "(" && prio(token) < prio(st.top())) {
 				q.push(st.top());
@@ -489,7 +491,8 @@ inline cld complex_calc(string str)
 	{
 		string token = q.front();
 		q.pop();
-		if (isdigit(token[0])|| (token[0] == '-' && isdigit(token[1])) || token=="i")
+		if (complex_variables.find(token) != complex_variables.end())stk.push(complex_variables[token]);
+		else if (isdigit(token[0])|| (token[0] == '-' && isdigit(token[1])) || token=="i")
 		{
 			cld n;
 			if (token=="i")n.imag(1);
@@ -566,15 +569,88 @@ inline cld complex_calc(string str)
 			const string& expr = it->second.second; 
 			cld x = stk.top();
 			stk.pop();
-			string old_value;
-			bool existed = (variables.find(var_name) != variables.end());
-			if (existed) old_value = variables[var_name];
-			variables[var_name] = to_string(x.real())+to_string(x.imag())+'i';
+			cld old_value;
+			bool existed = complex_variables.find(var_name) != complex_variables.end();
+			if (existed) old_value = complex_variables[var_name];
+			complex_variables[var_name] = x;
 			cld res = complex_calc(expr);
 			stk.push(res);
-			if (existed)variables[var_name] = old_value;
-			else variables.erase(var_name);
+			if (existed)complex_variables[var_name] = old_value;
+			else complex_variables.erase(var_name);
 		}
 	}
 	return stk.top();
+}
+
+inline cld complex_diff(const string& func, const cld z, const string& var_name) {
+	auto f = [&](cld y) {
+		complex_variables[var_name] = y;
+		return complex_calc(func);
+	};
+
+	const ld h = 5e-7;
+	return (f(z+h)-f(z-h))/(2*h);
+}
+
+inline cld complex_integral(const string& func, const string& zx, const string& can_var, const ld minn, const ld maxn, const string& var_name) {
+    auto f = [&](cld y) { 
+        complex_variables[var_name] = y;
+        return complex_calc(func);
+    };
+    auto z = [&](ld t) -> cld {
+        // Save current parameter value if it exists
+        cld old_param_val;
+        bool param_existed = complex_variables.find(can_var) != complex_variables.end();
+        if (param_existed) old_param_val = complex_variables[can_var];
+        
+        // Set the parameter value
+        complex_variables[can_var] = t;
+        
+        // Evaluate the path
+        cld path_val;
+        try {
+            path_val = complex_calc(zx);
+        } catch (...) {
+            if (param_existed) complex_variables[can_var] = old_param_val;
+            else complex_variables.erase(can_var);
+            throw;
+        }
+        
+        // Restore original parameter value
+        if (param_existed) complex_variables[can_var] = old_param_val;
+        else complex_variables.erase(can_var);
+        
+        return path_val;
+    };
+
+    // Numerical derivative for path calculation
+    auto dz_dt = [&](ld t) -> cld {
+        return complex_diff(zx,t,can_var);
+    };
+
+    constexpr int max_iter = 20;
+    cld integral = 0;
+    cld prev_integral = 0;
+    int n = 1;
+
+    for (int iter = 0; iter < max_iter; ++iter) {
+        constexpr ld tol = 1e-8;
+        cld sum = f(z(minn)) * dz_dt(minn) + f(z(maxn)) * dz_dt(maxn);
+        ld h = (maxn - minn) / n;
+
+        for (int i = 1; i < n; ++i) {
+            ld ti = minn + i * h;
+            int weight = i % 2 == 1 ? 4 : 2;
+            sum += cld(weight) * f(z(ti)) * dz_dt(ti);
+        }
+
+        integral = sum * h / 3.0L;
+        if (iter > 0 && abs(integral - prev_integral) < tol) {
+            break;
+        }
+        prev_integral = integral;
+        n *= 2;
+    }
+
+    return integral;
 }

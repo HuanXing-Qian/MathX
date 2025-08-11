@@ -123,13 +123,12 @@ static bool chao(string str) {
 	    	func.erase(0, func.find_first_not_of(" \t"));
 	    	func.erase(func.find_last_not_of(" \t") + 1);
 
-	    	// 保存旧值（如果存在）
 	    	string old_value;
-	    	bool var_existed = (variables.find(var_name) != variables.end());
+	    	bool var_existed = variables.find(var_name) != variables.end();
 	    	if (var_existed) old_value = variables[var_name];
 
 	    	variables[var_name] = "0"; 
-	        bool f=1;
+	        bool f=true;
 	    	str = ns(func);
 	    	stack<string> st;
 	    	queue<string> q;
@@ -261,11 +260,65 @@ static bool chao(string str) {
 			}
 			cout << "Result: " << huo*sum*h/3 << "\n";
 			variables["ans"] = to_string(sum*h/3);
+			complex_variables["ans"]=cld(sum*h/3);
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 			if(bao)variables[var_name]=bl;
 			else variables.erase(var_name);
+		}
+		return 0;
+	}
+
+	if (str.rfind("complex int")==0)
+	{
+		str.erase(0,12);
+		if (!str.empty())
+		{
+			istringstream iss(str);
+			string var_name, func;
+			ld minn, maxn;
+			string a,b;
+			iss >> var_name >> a >> b;
+			if(isdigit(var_name[0])){
+				if (lagg == 1)out("The variable name cannot be used in Numbers at first.\n", YELLOW);
+				else if (lagg == 2)out("变量名开头不能用数字。。\n", YELLOW);
+				else if (lagg == 3)out("Переменные не могут начинаться с чисел.\n", YELLOW);
+				return 0;
+			}
+			minn = calc(a);
+			maxn = calc(b);
+			getline(iss, func);
+			cld bl;
+			bool bao=false;
+			if (complex_variables.find(var_name)!=complex_variables.end())bl=complex_variables[var_name],bao=1;
+			string z,var;
+			
+			if (lagg==1)cout << "Complex function integration requires specifying the integration path: ";
+			else if (lagg==2)cout << "复变函数积分需要指定积分路径：";
+			else if (lagg==3)cout << "Для интегрирования комплексной функции необходимо указать путь интегрирования: ";
+			cin >> var; 
+			getline(cin, z); // 读取剩余路径表达式
+			z.erase(0, z.find_first_not_of(" \t")); // 去除前导空格
+			if (z.empty())return 0;
+			cld bl1;
+			bool bao1=false;
+			if (complex_variables.find(var)!=complex_variables.end())bl=complex_variables[var],bao1=true;
+			
+			auto start = chrono::high_resolution_clock::now();
+			cld ans = complex_integral(func,z,var,minn,maxn,var_name);
+			auto end = chrono::high_resolution_clock::now();
+			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
+			if (lagg == 1)cout << "Result = ";
+			else if (lagg == 2)cout << "结果 = ";
+			else if (lagg == 3)cout << "Результат = ";
+			cout << fixed << setprecision(precision) << ans.real() << (ans.imag()<0?'-':'+') << abs(ans.imag()) << "i\n";
+			complex_variables["ans"]=ans;
+			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
+			if (bao)complex_variables[var_name]=bl;
+			else complex_variables.erase(var_name);
+			if (bao1)complex_variables[var]=bl1;
+			else complex_variables.erase(var);
 		}
 		return 0;
 	}
@@ -291,15 +344,57 @@ static bool chao(string str) {
 			if(variables.find(var_name)!=variables.end())bl = variables[var_name], bao=1;
 			auto start = chrono::high_resolution_clock::now();
 			ld sum=diff(func, x, var_name);
-			cout << "Result: " << fixed << setprecision(precision) << sum << "\n";
+			if (lagg == 1)cout << "Result = ";
+			else if (lagg == 2)cout << "结果 = ";
+			else if (lagg == 3)cout << "Результат = ";
+			cout << fixed << setprecision(precision) << sum << "\n";
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 			variables["ans"] = to_string(sum);
+			complex_variables["ans"]=cld(sum);
 			if(bao)variables[var_name] = bl;
 			else variables.erase(var_name);
 			return 0;
 		}
+	}
+
+	if (str.rfind("complex diff")==0)
+	{
+		str.erase(0,13);
+		if(!str.empty())
+		{
+			istringstream iss(str);
+			string var_name, func;
+			string input;
+			cld z;
+			iss>>var_name>>input;
+			z=complex_calc(input);
+			getline(iss,func);
+			cld bl;
+			if(isdigit(var_name[0]))
+			{
+				if (lagg == 1)out("The variable name cannot be used in Numbers at first.\n", YELLOW);
+				else if (lagg == 2)out("变量名开头不能用数字。。\n", YELLOW);
+				else if (lagg == 3)out("Переменные не могут начинаться с чисел.\n", YELLOW);
+				return 0;
+			}
+			bool bao=0;
+			if (complex_variables.find(var_name)!=complex_variables.end())bl=complex_variables[var_name], bao=1;
+			auto start = chrono::high_resolution_clock::now();
+			cld ans = complex_diff(func,z,var_name);
+			auto end = chrono::high_resolution_clock::now();
+			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
+			if (lagg == 1)cout << "Result = ";
+			else if (lagg == 2)cout << "结果 = ";
+			else if (lagg == 3)cout << "Результат = ";
+			cout << fixed << setprecision(precision) << ans.real() << (ans.imag()<0?'-':'+') << abs(ans.imag()) << "i\n";
+			complex_variables["ans"]=ans;
+			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
+			if (bao)complex_variables[var_name]=bl;
+			else complex_variables.erase(var_name);
+		}
+		return 0;
 	}
 	
 	if (str.rfind("sum")==0){
@@ -328,8 +423,12 @@ static bool chao(string str) {
 		};
 		ld ans=0;
 		rep(i,minn,maxn,1)ans+=f(i);
-		cout << "Result: " << fixed << setprecision(precision) << ans << "\n";
+		if (lagg == 1)cout << "Result = ";
+		else if (lagg == 2)cout << "结果 = ";
+		else if (lagg == 3)cout << "Результат = ";
+		cout << fixed << setprecision(precision) << ans << "\n";
 		variables["ans"]=to_string(ans);
+		complex_variables["ans"]=cld(ans);
 		auto end = chrono::high_resolution_clock::now();
 		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 		if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
@@ -443,7 +542,8 @@ static bool chao(string str) {
 	        else if (lagg == 2) cout << "解：";
 	        else if (lagg == 3) cout << "Решение: ";
 	        cout << fixed << setprecision(precision) << x0 << "\n";
-
+	    	complex_variables["ans"]=cld(x0);
+	    	variables["ans"]=to_string(x0);
 	        if (var_existed) variables[var_name] = old_value;
 	        else variables.erase(var_name);
 	        
@@ -628,7 +728,7 @@ static bool chao(string str) {
 			     << "  exit                  Quit MathX\n"
 			     << "========================================\n" << RESET;
 		} else if (lagg == 2) {
-			cout << CYAN << "MATHX 命令大全\n"
+			cout << CYAN << "MathX 命令大全\n"
 			     << "========================================\n"
 			     << "基础计算\n"
 			     << "  [表达式]          计算数学表达式\n"
@@ -708,13 +808,19 @@ static bool chao(string str) {
 			else if (lagg == 3)out("Переменные не могут начинаться с чисел.\n", YELLOW);
 			return 0;
 		}
-
-		ld result = calc(value_str);
+		cld result;
+		if (!complex_mode)result = cld(calc(value_str));
+		else result = complex_calc(value_str);
 		ostringstream oss;
 		oss << fixed << setprecision(80) << result;
-		variables[var_name] = oss.str();
+		if (!complex_mode)variables[var_name] = oss.str();
+		complex_variables[var_name] = result;
 
-		if (lagg == 1)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
+		if (lagg == 1)
+		{
+			out("Variable '" + var_name + "' set to ", BLUE);
+			cout<<BLUE<<complex_variables[var_name]<<"\n"<<RESET;
+		}
 		else if (lagg == 2)out("变量" + var_name + "已经设为" + variables[var_name] + "\n", BLUE);
 		else if (lagg == 3)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
 		return 0;
@@ -722,7 +828,7 @@ static bool chao(string str) {
 
 	if (str == "list vars") {
 		int x = 1;
-		for (auto v : variables)
+		for (auto v : complex_variables)
 			cout << x++ << ". " << v.first << " = " << v.second << endl;
 		return 0;
 	}
@@ -925,7 +1031,7 @@ static void run() {
 		cout << fixed << setprecision(precision) << result.real();
 		cout<<(result.imag()<0 ? " - " : " + ")<<abs(result.imag())<<"i\n";
 		history.push_back({str, to_string(result.real())+"+"+to_string(result.imag())+"i"});
-		variables["ans"] = to_string(result.real())+"+"+to_string(result.imag())+"i";
+		complex_variables["ans"] = result;
 		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 	}
 }

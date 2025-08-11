@@ -99,6 +99,8 @@ unordered_map<string, vector<pair<string, vector<string> > > > ledge;
 
 unordered_map<string, string> variables;
 
+unordered_map<string,cld>complex_variables;
+
 struct node {
     string in;
     string result;
@@ -204,7 +206,7 @@ inline string ns(string expr) {
     return final;
 }
 
-inline void out(string str, string color) {
+inline void out(const string& str, const string& color) {
     cout << color << str << RESET;
 }
 
@@ -248,6 +250,7 @@ inline void Ready() {
         if (!func[i].empty())yuan[i] = x;
     }
     variables["ans"]="0";
+    complex_variables["ans"]=cld(0);
     cout << "========================================\n"
          << "|            MathX 2.0 Beta            |\n"
          << "|      Enter [help] for commands       |\n"
