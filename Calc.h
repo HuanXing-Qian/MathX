@@ -37,7 +37,7 @@ inline ld calc(string str) {
 				return 0;
 			}
 			ld sum = stold(token);
-			if (int(sum) != sum) {
+			if (ll(sum) != sum) {
 				if (lagg == 1) out("The usage of this function is to add a non-negative integer after the function name.\n", RED);
 				else if (lagg == 2) out("错误：必须输入整数。\n", RED);
 				else if (lagg == 3) out("Ошибка: требуется целое число.\n", RED);
@@ -144,7 +144,7 @@ inline ld calc(string str) {
 				return 0;
 			}
 			ld res;
-			int index = distance(begin(func), find(begin(func), end(func), token));
+			ll index = distance(begin(func), find(begin(func), end(func), token));
 			if (yuan[index] == 1) {
 				ld x = stk.top();
 				stk.pop();
@@ -173,14 +173,24 @@ inline ld calc(string str) {
 				else if (token == "lngamma") res = lgamma(x);
 				else if (token == "atr") res = x / 180 * stold(constants.at("pi"));
 				else if (token == "rta") res = x / stold(constants.at("pi")) * 180;
-				else if (token == "isprime") res = high_precision_func::is_prime(u64(x));
+				else if (token == "isprime")
+				{
+					if (find(primes.begin(),primes.end(),ll(x))!=primes.end())res=1;
+					else res = high_precision_func::is_prime(u64(x));
+				} 
 				else if (token == "prime") {
-					int cnt = 0;
-					for (u64 i = 2;; i++)if (high_precision_func::is_prime(i))if (++cnt == x) {
-								res = i;
+					if (x <= primes.size()) res = primes[x - 1];
+					else {
+						for (ll j = primes.back()==2?primes.back()+1:primes.back()+2;; j+=2) {
+							if (high_precision_func::is_prime(j)) primes.push_back(j);
+							if (x==primes.size()) {
+								res = j;
 								break;
 							}
+						}
+					}
 				}
+
 			} else if (yuan[index] == 2) {
 				ld x = stk.top();
 				stk.pop();
@@ -203,7 +213,11 @@ inline ld calc(string str) {
 						}
 						res = ll(x*y) / high_precision_func::gcd(ll(x), ll(y));
 					} else if (token == "hypot")res = sqrt(x * x + y * y);
-					else if (token == "C") res = tgamma(y+1) / (tgamma(x+1) * tgamma(y - x+1));
+					else if (token == "C")
+					{
+						res = tgamma(y+1) / (tgamma(x+1) * tgamma(y - x+1));
+						Achievement[11].first.second++;
+					}
 					else if (token == "rand") {
 						ll a = x, b = y;
 						if(a>b)swap(a,b);
@@ -211,6 +225,7 @@ inline ld calc(string str) {
 						mt19937 gen(rd());
 						uniform_int_distribution<ll> dist(a,b);
 						res = ld(dist(gen));
+						Achievement[6].first.second++;
 					}
 					stk.pop();
 				} else {
@@ -253,11 +268,9 @@ inline ld diff(const string& func, const ld x, const string& var_name){
 		variables[var_name] = to_string(y);
 		return calc(func); 
 	};
-	ld h = 5e-7;
+	ld h = 1e-6;
 	return (f(x+h)-f(x-h))/(2*h);
 }
-
-
 
 inline void big_pow(const string& str)
 {
@@ -410,7 +423,7 @@ inline cld complex_gamma(cld z) {
 
 	z -= 1.0L;
 	cld x = p[0];
-	for (int i = 1; i < 9; ++i) x += p[i] / (z + cld(i, 0));
+	for (ll i = 1; i < 9; ++i) x += p[i] / (z + cld(i, 0));
     
 	cld t = z + g + 0.5L;
 	return sqrt_2_pi * pow(t, z + 0.5L) * exp(-t) * x;
@@ -531,7 +544,7 @@ inline cld complex_calc(string str)
 				return 0;
 			}
 			cld res;
-			int index = distance(begin(func), find(begin(func), end(func), token));
+			ll index = distance(begin(func), find(begin(func), end(func), token));
 			if (yuan[index]==1)
 			{
 				cld z = stk.top();
@@ -628,19 +641,19 @@ inline cld complex_integral(const string& func, const string& zx, const string& 
         return complex_diff(zx,t,can_var);
     };
 
-    constexpr int max_iter = 20;
+    constexpr ll max_iter = 20;
     cld integral = 0;
     cld prev_integral = 0;
-    int n = 1;
+    ll n = 1;
 
-    for (int iter = 0; iter < max_iter; ++iter) {
+    for (ll iter = 0; iter < max_iter; ++iter) {
         constexpr ld tol = 1e-8;
         cld sum = f(z(minn)) * dz_dt(minn) + f(z(maxn)) * dz_dt(maxn);
         ld h = (maxn - minn) / n;
 
-        for (int i = 1; i < n; ++i) {
+        for (ll i = 1; i < n; ++i) {
             ld ti = minn + i * h;
-            int weight = i % 2 == 1 ? 4 : 2;
+            ll weight = i % 2 == 1 ? 4 : 2;
             sum += cld(weight) * f(z(ti)) * dz_dt(ti);
         }
 

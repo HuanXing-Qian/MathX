@@ -1,0 +1,10 @@
+你当然不知道，其实factor可以分解质因数哦~
+想求第5000个素数？输入prime(5000)就行啦~
+想要素数表？直接输入data x 1 1000 1 prime(x)就能求1到1000个素数啦？这里data x 1 1000 1 isprime(x)就可以看情况
+想知道[a,b]区间有多少素数？输入sum x a b isprime(x)即可！
+输入complex int z 0 2pi 1/z再输入t exp(i*t)就可以计算经典的围道积分\int_|z|=1 dz/z参数化的结果啦！
+想要求复数导？输入complex diff就行啦！
+7
+8
+9
+10
