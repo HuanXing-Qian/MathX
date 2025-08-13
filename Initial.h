@@ -13,6 +13,7 @@
 #include<iomanip>
 #include <cstdlib>
 #include <map>
+#include <regex>
 #include <set>
 #ifdef _WIN32
     #include <windows.h>  // 用于 Windows 平台
@@ -153,7 +154,6 @@ inline string ns(string expr) {
         if (c == ',') result += ' ';
         else result += c;
 
-
         if ((isalnum(c) || c == '.') && i < len - 1) {
             char next = expr[i + 1];
             if (string("+-*/^%()").find(next) != string::npos) result += ' ';
@@ -164,13 +164,17 @@ inline string ns(string expr) {
         }
 
         if (c == '-' && i < len - 1) {
-            bool isNegativeSign = (i == 0) || (string("+-*/^%( ").find(expr[i - 1]) != string::npos);
+            bool isNegativeSign = i == 0 || string("+-*/^%( ").find(expr[i - 1]) != string::npos;
             int j = i + 1;
             string lin;
             while (j < len && isalpha(expr[j])) lin += expr[j++];
-
-            if (prio(lin) == 5) isNegativeSign = true;
-            if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
+            if (prio(lin)==4) {
+                result.pop_back();  // 移除已添加的 '-'
+                result += "0 - ";  // 添加 "0-"
+            } else {
+                if (prio(lin) == 5) isNegativeSign = true;
+                if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
+            }
         }
     }
 
@@ -311,11 +315,22 @@ inline void is_achievement() {
         }
     }
 
-    ofstream file("Achievement.txt");
-    if (file.is_open()) { 
-        for (const auto& v : Achievement)file << v.first.first << " " << v.first.second << " " << v.second.first << " " << v.second.second << "\n";
-        file.close();
-    } else cout << "无法打开文件以保存成就。\n";
+    //ofstream file("Achievement.txt");
+    //if (file.is_open()) { 
+    //    for (const auto& v : Achievement)file << v.first.first << " " << v.first.second << " " << v.second.first << " " << v.second.second << "\n";
+    //    file.close();
+    // } else cout << "无法打开文件以保存成就。\n";
+}
+
+bool parseComplex(const string& str, ld& real, ld& imag) {
+    regex complex_re(R"(([-+]?\d*\.?\d+)([-+]\d*\.?\d*)i)");
+    smatch match;
+    if (regex_match(str, match, complex_re)) {
+        real = stod(match[1]);
+        imag = stod(match[2]);
+        return true;
+    }
+    return false;
 }
 
 inline void Ready() {

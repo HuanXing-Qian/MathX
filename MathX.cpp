@@ -359,7 +359,7 @@ static bool chao(string str) {
 		return 0;
 	}
 	
-	if (str.rfind("diff")==0){
+	/*if (str.rfind("diff")==0){
 		str.erase(0,5);
 		if(!str.empty()){
 			istringstream iss(str);
@@ -394,11 +394,11 @@ static bool chao(string str) {
 			Achievement[4].first.second++;
 			return 0;
 		}
-	}
+	}*/
 
-	if (str.rfind("complex diff")==0)
+	if (str.rfind("diff")==0)
 	{
-		str.erase(0,13);
+		str.erase(0,5);
 		if(!str.empty())
 		{
 			istringstream iss(str);
@@ -419,7 +419,10 @@ static bool chao(string str) {
 			bool bao=0;
 			if (complex_variables.find(var_name)!=complex_variables.end())bl=complex_variables[var_name], bao=1;
 			auto start = chrono::high_resolution_clock::now();
-			cld ans = complex_diff(func,z,var_name);
+			complex_variables[var_name]=z;
+			string result = diff_calc_fu(func,var_name);
+			cout << "求导结果（未完全化简）：" << result << "\n";
+			cld ans = complex_calc(result);
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 			if (lagg == 1)cout << "Result = ";
@@ -855,11 +858,13 @@ static bool chao(string str) {
 			else if (lagg == 3)out("Переменные не могут начинаться с чисел.\n", YELLOW);
 			return 0;
 		}
+		ld result1;
 		cld result;
-		if (!complex_mode)result = cld(calc(value_str));
+		if (!complex_mode)result1 = calc(value_str);
 		else result = complex_calc(value_str);
 		ostringstream oss;
-		oss << fixed << setprecision(80) << result;
+		if (!complex_mode)oss << fixed << setprecision(80) << result1;
+		else oss << fixed << setprecision(80) << result;
 		if (!complex_mode)variables[var_name] = oss.str();
 		complex_variables[var_name] = result;
 
