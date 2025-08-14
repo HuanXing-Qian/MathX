@@ -723,7 +723,7 @@ inline string diff_calc_fu(string str,string var_name)
 			if (lagg == 1)out("Expression error.\n", RED);
 			else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
 			else if (lagg == 3)out("Ошибка выражения.\n", RED);
-			return 0;
+			return nullptr;
 		}
 		i++;
 	}
@@ -755,7 +755,11 @@ inline string diff_calc_fu(string str,string var_name)
 			cld n;
 			if (token=="i")n.imag(1);
 			else n.real(stold(token));
-			if (n.imag()==0)stk.push({to_string(n.real()),"0"});
+			if (n.imag()==0)
+			{
+				if (static_cast<ll>(n.real() != n.real()))stk.push({to_string(n.real()),"0"});
+				else stk.push({to_string(ll(n.real())),"0"});
+			}
 			else stk.push({to_string(n.real())+"+"+to_string(n.imag())+"i","0"});
 		}
 		else if (prio(token)<4)
@@ -764,7 +768,7 @@ inline string diff_calc_fu(string str,string var_name)
 				if (lagg == 1)out("Error: Insufficient " + token + " operators.\n", RED);
 				else if (lagg == 2)out("没有足够的" + token + "操作数，即有左没右或者反之。\n", RED);
 				else if (lagg == 3)out("Ошибка: не хватает операторов " + token + " для выполнения операции.\n", RED);
-				return 0;
+				return nullptr;
 			}
 			auto r=stk.top();
 			stk.pop();
@@ -810,24 +814,48 @@ inline string diff_calc_fu(string str,string var_name)
 			    if (r.first == "0")
 			    {
 			        out("inf\n", YELLOW);
-			        return 0;
+			        return "0";
 			    }
-			    string hou = "((" + r.first + ")*(" + l.second + ") - (" + l.first + ")*(" + r.second + ")) / (" + r.first + ")^2";
-			    
-			    // 简化 hou
-			    if (r.first == "1") {
-			        hou = "(" + l.second + " - (" + l.first + ")*(" + r.second + "))";
+			    string hou="(";
+			    if (l.second!="1")
+			    {
+			    	if (l.second.size()!=1)hou+="("+l.second+")";
+			    	else hou+=l.second;
+				    if (r.first!="1")
+				    {
+					    if (r.first.size()!=1)hou+="*("+r.first+")";
+				    	else hou+="*"+r.first;
+				    }
+			    }else
+			    {
+				    if (r.first!="1")hou+=r.first;
+			    	else hou+="1";
 			    }
-			    if (l.second == "0") {
-			        hou = "-" + l.first + "*" + r.second + " / " + r.first + "^2";
-			    }
-			    if (r.second == "0") {
-			        hou = l.second + " / " + r.first;
-			    }
-			    if (l.second == "0" && r.second == "0") {
-			        hou = "0";
-			    }
-
+				hou+="-";
+				if (l.second=="0" || r.second=="0")hou="(-";
+				if (l.first!="1")
+				{
+					if (l.first.size()!=1)hou+="("+l.first+")";
+					else hou+=l.first;
+					if (r.second!="1")
+					{
+						if (r.second.size()!=1)hou+="*("+r.second+")";
+						else hou+="*"+r.second;
+					}
+				}else
+				{
+					if (r.second!="1")hou+=r.second;
+					else hou+="1";
+				}
+			    hou+=")";
+				if ((l.second=="0"||r.first=="0")&&(l.first=="0"||r.second=="0"))hou="0";
+				else if (r.first!="1")
+				{
+					if (r.first.size()!=1)hou+="/("+r.first+")^2";
+					else hou+="/"+r.first+"^2";
+				}
+				
+				
 			    result = { l.first + "/" + r.first, hou };
 			}
 			else if (token == "^")
@@ -903,7 +931,7 @@ inline string diff_calc_fu(string str,string var_name)
 						second_+="*ln("+to_string(cc.real())+"+"+to_string(cc.imag())+"i)";
 						if (r.second!="1")second_+="("+r.second+")";
 					}
-					if (cc==cld(1))second_="0";
+					if (cc==cld(1)||cc==cld(0))second_="0";
 				}
 				else // f(x)^g(x)
 				{
@@ -962,7 +990,7 @@ inline string diff_calc_fu(string str,string var_name)
 					string hou;
 					if (dz!="0")
 					{
-						hou="(-sin("+z+"))";
+						hou="(0-sin("+z+"))";
 						if (dz!="1")hou+="*("+dz+")";
 					}
 					else hou="0";

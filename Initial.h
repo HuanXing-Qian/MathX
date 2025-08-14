@@ -168,13 +168,9 @@ inline string ns(string expr) {
             int j = i + 1;
             string lin;
             while (j < len && isalpha(expr[j])) lin += expr[j++];
-            if (prio(lin)==4) {
-                result.pop_back();  // 移除已添加的 '-'
-                result += "0 - ";  // 添加 "0-"
-            } else {
-                if (prio(lin) == 5) isNegativeSign = true;
-                if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
-            }
+            if (prio(lin) == 5) isNegativeSign = true;
+            if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
+            
         }
     }
 
