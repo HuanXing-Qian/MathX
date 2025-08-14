@@ -8,7 +8,7 @@
 - clear history 清空保存历史
 - factor 后面跟一个2^63-1内的正整数，求质因数分解
 - int x a b f(x) 求`\int_a^b f(x) dx`，这里因为一些误差，所以如果是收敛的无穷限积分请调小一点，不然就会出现`int x 0 10000 sin(x^2)`是-293.13的情况
-- diff x x0 f(x) 求`f'(x)\mid_x0`
+- diff x x0 f(x) 求`f'(x)\mid_x0`，注意：现在的diff可以通过自动微分也可以得到未完全化简的符号计算导数，而且可以弄复数。
 - sum x a b f(x) 求`\sum_{x=a}^b f(x)`
 - data x a b l f(x) 求[a,b]区间，步长为l中f(x)分别的值。
 - solve x x0 f(x) 求f(x)函数的零点，可以用来解方程（如x^-2x+1=0，但是你要确保右边是0）
@@ -36,5 +36,5 @@
 - search domain 展示domain中的所有知识的标题
 最近2025年8月8日我又添加了非常好的一个功能——复数，输入`complex`或者`complex on`就可以打开，在该模式下你可以使用复数运算，支持了普通计算的大部分功能，如`sin`,`cos`,`tan`等，一些比大小、整数函数就不支持，因为根本就支持不了。
 - complex int z a b f(z)，按下回车后继续输入z(t)的参数化的变量名t并输入z(t)的表达式，就可以计算参数化z(t)的复变积分`\int_a^b f(z(t))z'(t) dt`
-- complex diff z z0 f(z)，和实数diff差不多，就是可以支持复数了。
+之前说的complex diff被diff替代了。
 以及，输入easter egg可以获得一些小知识，我会努力加的！我还加入了成就系统，诶等下，有点像游戏了啊？？
