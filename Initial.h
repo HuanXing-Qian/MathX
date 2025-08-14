@@ -296,7 +296,11 @@ inline void inAchievement()
             pair<ll,int> lin2 = {mu,is};
             Achievement.push_back({lin,lin2});
         }
-    }else cout<<"连这个也没了？？？"<<endl;
+    }else
+    {
+        cout<<"连这个也没了？？？"<<endl;
+        return;
+    }
     file.close();
     ifstream fe("Shi.txt");
     if (fe)
@@ -319,7 +323,7 @@ inline void is_achievement() {
     //if (file.is_open()) { 
     //    for (const auto& v : Achievement)file << v.first.first << " " << v.first.second << " " << v.second.first << " " << v.second.second << "\n";
     //    file.close();
-    // } else cout << "无法打开文件以保存成就。\n";
+    //} else cout << "无法打开文件以保存成就。\n";
 }
 
 bool parseComplex(const string& str, ld& real, ld& imag) {

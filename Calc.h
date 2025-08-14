@@ -262,16 +262,6 @@ inline ld calc(string str) {
 	return stk.top();
 }
 
-inline ld diff(const string& func, const ld x, const string& var_name){
-	auto f = [&](ld y) { 
-		variables[var_name] = to_string(y);
-		return calc(func); 
-	};
-	ld h = 1e-6;
-	return (f(x+h)-f(x-h))/(2*h);
-}
-
-
 inline void big_pow(const string& str)
 {
 	istringstream iss(str);
@@ -325,75 +315,6 @@ inline void big_pow(const string& str)
 	cout << fixed << setprecision(baoliu) << A << "e" << B << "\n";
 	cout << "最后几位数字：" << win << "\n";
 	if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
-}
-
-inline string integral_calc(string& str, const string& var_name)
-{
-	str=ns(str);
-	stack<string> st;
-	queue<string> q;
-	ll i=0;
-	while (i<str.length())
-	{
-		string token;
-		while (i<str.length() && str[i] != ' ') token += str[i++];
-		
-		if (token.empty()) {
-			i++;
-			continue;
-		}
-		if (token == var_name) st.push(token);
-		else if (variables.find(token) != variables.end()) q.push(variables[token]);
-		else if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1])))q.push(token);
-		else if (prio(token) == 4 || prio(token) == 6) st.push(token);
-		else if (token == "^" || token == "%") {
-			while (!st.empty() && st.top() != "(" && prio(token) < prio(st.top())) {
-				q.push(st.top());
-				st.pop();
-			}
-			st.push(token);
-		} else if (token == "+" || token == "-" || token == "*" || token == "/") {
-			while (!st.empty() && st.top() != "(" && prio(token) <= prio(st.top())) {
-				q.push(st.top());
-				st.pop();
-			}
-			st.push(token);
-		} else if (prio(token) == 5) q.push(constants.at(token));
-		else if (token[0] == '-' && prio(token.substr(1)) == 5) {
-			string const_name = token.substr(1);
-			q.push("-" + constants.at(const_name));
-		} else if (token == "(") st.push(token);
-		else if (token == ")") {
-			while (!st.empty() && st.top() != "(") {
-				q.push(st.top());
-				st.pop();
-			}
-			if (!st.empty() && st.top() == "(") st.pop();
-			if (!st.empty() && prio(st.top()) == 4) {
-				q.push(st.top());
-				st.pop();
-			}
-		} else {
-			if (lagg == 1)out("Expression error.\n", RED);
-			else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
-			else if (lagg == 3)out("Ошибка выражения.\n", RED);
-			return "";
-		}
-		i++;
-	}
-	while (!st.empty())
-	{
-		q.push(st.top());
-		st.pop();
-	}
-	auto nq=q;
-	while (!nq.empty())
-	{
-		cout<<nq.front()<<" ";
-		nq.pop();
-	}
-	cout<<"\n";
-	return "";
 }
 
 inline cld operator+(const cld& cldh, const ld rhs)
@@ -633,7 +554,6 @@ inline cld complex_calc(string str)
 			}
 		}
 		else {
-			//cout<<"Here2"<<endl;
 			if (lagg == 1)out("Expression error.\n", RED);
 			else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
 			else if (lagg == 3)out("Ошибка выражения.\n", RED);
@@ -800,7 +720,6 @@ inline string diff_calc_fu(string str,string var_name)
 			}
 		}
 		else {
-			//cout<<"Here1"<<endl;
 			if (lagg == 1)out("Expression error.\n", RED);
 			else if (lagg == 2)out("伙计，表达式都写错了。\n", RED);
 			else if (lagg == 3)out("Ошибка выражения.\n", RED);
@@ -838,7 +757,8 @@ inline string diff_calc_fu(string str,string var_name)
 			else n.real(stold(token));
 			if (n.imag()==0)stk.push({to_string(n.real()),"0"});
 			else stk.push({to_string(n.real())+"+"+to_string(n.imag())+"i","0"});
-		}else if (prio(token)<4)
+		}
+		else if (prio(token)<4)
 		{
 			if (stk.size() < 2) {
 				if (lagg == 1)out("Error: Insufficient " + token + " operators.\n", RED);
@@ -993,36 +913,39 @@ inline string diff_calc_fu(string str,string var_name)
 					else second_+="("+r.first+")*(";
 					if (l.first!="1"){
 						if (r.second.find_first_not_of("0123456789") != string::npos)second_+="("+r.second+")";
-						else second_+=r.second;
-						second_+="ln("+l.first+")+";
+						else if (r.second!="1")second_+=r.second;
+						if (r.second!="0")second_+="ln("+l.first+")+";
 					}
-					if (r.first.size()!=1)second_+="("+r.first+")";
-					else second_+=r.first;
-					if (l.second.size()!=1)second_+="("+l.second+")";
-					else second_+="*"+l.second;
-					second_+="/";
-					if (l.first.size()!=1)second_+="("+l.first+")";
-					else second_+=l.first;
+					if (r.first==l.first)second_+="1";
+					else
+					{
+						if (r.first.size()!=1)second_+="("+r.first+")";
+						else second_+=r.first;
+						if (l.second.size()!=1)second_+="("+l.second+")";
+						else if (l.second!="1")second_+="*"+l.second;
+						second_+="/";
+						if (l.first.size()!=1)second_+="("+l.first+")";
+						else second_+=l.first;
+					}
+					
 					second_+=")";
 				}
 				result = {first_,second_};
 			}
 			stk.push(result);
-		}else if (prio(token)==4)
+		}
+		else if (prio(token)==4)
 		{
 			if (stk.empty()) {
 				out("No " + token + " function.\n", RED);
 				return 0;
 			}
 			pair<string,string> res;
-			ll index = distance(begin(func), find(begin(func), end(func), token));
-			if (yuan[index]==1)
-			{
-				auto x = stk.top();
-				stk.pop();
-				string z=x.first;
-				string dz = x.second;
-				if (token=="sin")
+			auto x = stk.top();
+			stk.pop();
+			string z=x.first;
+			string dz = x.second;
+			if (token=="sin")
 				{
 					string hou;
 					if (dz!="0")
@@ -1034,7 +957,7 @@ inline string diff_calc_fu(string str,string var_name)
 					
 					res = {"sin("+z+")",hou};
 				}
-				else if (token=="cos")
+			else if (token=="cos")
 				{
 					string hou;
 					if (dz!="0")
@@ -1045,7 +968,7 @@ inline string diff_calc_fu(string str,string var_name)
 					else hou="0";
 					res = {"cos("+z+")",hou};
 				}
-				else if (token=="tan") {
+			else if (token=="tan") {
 				    string hou;
 				    if (dz != "0") {
 				    	for (auto v:dz)if (!isdigit(v))
@@ -1139,8 +1062,7 @@ inline string diff_calc_fu(string str,string var_name)
 				        else if (dz == "-1") hou = "-1/((" + z + ")*ln(10))";
 				    } else hou = "0";
 				    res = {"log10(" + z + ")", hou};
-				}
-				else if (token == "abs") {
+				}else if (token == "abs") {
 					// 值计算: |u|
 					string val_expr = "abs(" + z + ")";
     
@@ -1150,8 +1072,7 @@ inline string diff_calc_fu(string str,string var_name)
     
 					// 检查 u=0 的情况（可选，符号计算可能无法静态检测）
 					res = {val_expr, deriv_expr};
-				}
-				else if (token == "sinc") {
+				}else if (token == "sinc") {
 					string val_expr = "sinc("+z+")";
 					string deriv_expr = 
 						"(((" + z + ")*cos(" + z + ") - sin(" + z + ")) / (" + 
@@ -1159,9 +1080,10 @@ inline string diff_calc_fu(string str,string var_name)
     
 					res = {val_expr, deriv_expr};
 				}
-			}
+			
 			stk.push(res);
-		}else if (prio(token) == 6) {
+		}
+		else if (prio(token) == 6) {
 			if (stk.empty()) {
 				out("No " + token + " function.\n", RED);
 				return 0;
@@ -1180,7 +1102,6 @@ inline string diff_calc_fu(string str,string var_name)
 	return stk.top().second;
 }
 
-
 inline cld complex_diff(const string& func, const cld z, const string& var_name) {
 	auto f = [&](cld y) {
 		complex_variables[var_name] = y;
@@ -1189,25 +1110,6 @@ inline cld complex_diff(const string& func, const cld z, const string& var_name)
 
 	const ld h = 5e-7;
 	return (f(z+h)-f(z-h))/(2*h);
-}
-
-inline string cas(string str)
-{
-	str=ns(str);
-	vector<string>tokens;
-	ll i=0;
-	while (i<str.length())
-	{
-		string token;
-		while (i<str.length() && str[i] != ' ') token += str[i++];
-		if(token.empty())
-		{
-			i++;
-			continue;
-		}
-		tokens.push_back(token);
-	}
-	for (auto v:tokens)cout << v << " ";
 }
 
 inline cld complex_integral(const string& func, const string& zx, const string& can_var, const ld minn, const ld maxn, const string& var_name) {
@@ -1243,8 +1145,8 @@ inline cld complex_integral(const string& func, const string& zx, const string& 
 
     // Numerical derivative for path calculation
     auto dz_dt = [&](ld t) -> cld {
-    	complex_variables[var_name]=t;
-        return complex_calc(diff_calc_fu(zx,var_name));
+    	complex_variables[can_var]=t;
+        return complex_calc(diff_calc_fu(zx,can_var));
     };
 
     constexpr ll max_iter = 20;

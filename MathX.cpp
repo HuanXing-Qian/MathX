@@ -421,7 +421,7 @@ static bool chao(string str) {
 			auto start = chrono::high_resolution_clock::now();
 			complex_variables[var_name]=z;
 			string result = diff_calc_fu(func,var_name);
-			cout << "求导结果（未完全化简）：" << result << "\n";
+			cout << "求导结果（可能未完全化简）：" << result << "\n";
 			cld ans = complex_calc(result);
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
@@ -557,7 +557,8 @@ static bool chao(string str) {
 	        
 	        while (iter++ < max_iter) {
 	            ld fx = f(x0);
-	            ld dfx = diff(func, x0, var_name);
+	        	complex_variables[var_name]=x0;
+	            ld dfx = complex_calc(diff_calc_fu(func, var_name)).real();
 	            
 	            // 处理导数为零的情况
 	            if (abs(dfx) < 1e-10) {
