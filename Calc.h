@@ -340,7 +340,7 @@ inline cld complex_gamma(cld z) {
 		1.5056327351493116e-7L
 	};
     
-	if (z.real() <= 0.5L) return PI / (sin(PI * z) * complex_gamma(cld(1.0L) - z));
+	if (z.real() < 0.5L) return PI / (sin(PI * z) * complex_gamma(cld(1.0L) - z));
 
 	z -= 1.0L;
 	cld x = p[0];
