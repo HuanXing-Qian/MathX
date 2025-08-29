@@ -5,39 +5,6 @@
 vector<node>history;
 
 static bool chao(string str) {
-	if (str=="easter egg")
-	{
-		random_device rd;
-		mt19937 gen(rd());
-		uniform_int_distribution<ll> dist(0,little_knowledge.size()-1);
-		int index = dist(gen);
-		cout<<little_knowledge.at(index)<<"\n";
-		int In = knowledge_vis.size();
-		knowledge_vis.insert(index);
-		if (In<knowledge_vis.size())Achievement[1].first.second++;
-		return 0;
-	}
-	
-	if (str=="list functions")
-	{
-		int x=1;
-		for (auto v:deffunc)cout << x++ << ":" << v.first << "(" << v.second.first << ") = " << v.second.second << endl;
-		return 0;
-	}
-	
-	if (str=="time")
-	{
-		time_t rawtime;
-		tm * timeinfo;
-
-		time ( &rawtime );
-		timeinfo = localtime ( &rawtime );
-		if (lagg==1)printf ( "The current date/time is: %s", asctime (timeinfo) );
-		else if (lagg==2)printf ( "当前的时间是: %s", asctime (timeinfo) );
-		else if (lagg==3)printf ( "Текущее время: %s", asctime (timeinfo) );
-		return false;
-	}
-	
 	if (str=="complex"||str=="complex on")
 	{
 		complex_mode = true;
@@ -100,8 +67,8 @@ static bool chao(string str) {
 			else if (lagg == 3)out("Вы хотели сказать\"" + best_match + "\"?\n", YELLOW);
 		} else {
 			if (lagg == 1)out("No matching concept found.\n", RED);
-			else if (lagg == 2)out("未找到匹配项。\n", RED);
-			else if (lagg == 2)out("Совпадений не найдено.\n", RED);
+			else if (lagg = 2)out("未找到匹配项。\n", RED);
+			else if (lagg = 2)out("Совпадений не найдено.\n", RED);
 		}
 		return 0;
 	}
@@ -112,13 +79,13 @@ static bool chao(string str) {
 			for (auto v : ledge[func_name]) out(to_string(x++) + ": " + v.first + "\n", CYAN);
 		} else {
 			if (lagg == 1)out("No matching concept found.\n", RED);
-			else if (lagg == 2)out("未找到匹配项。\n", RED);
-			else if (lagg == 2)out("Совпадений не найдено.\n", RED);
+			else if (lagg = 2)out("未找到匹配项。\n", RED);
+			else if (lagg = 2)out("Совпадений не найдено.\n", RED);
 		}
 		return 0;
 	}
 	if (str.empty()) return 0;
-	if (str == "exit"||str=="quit") exit(0);
+	if (str == "exit") exit(0);
 	if (str == "clear history") {
 		if (lagg == 1)out("Finished.\n", GREEN);
 		else if (lagg == 2)out("完毕。唉，但愿我不要再说类似“已完成”这样的话了。\n", GREEN);
@@ -137,8 +104,7 @@ static bool chao(string str) {
 			}
 			auto factors = high_precision_func::factorize(n);
 			string factorization = high_precision_func::format_factorization(factors);
-			cout<<"质因数分解："<< factorization << "\n";
-			Achievement[5].first.second++;
+			cout<<"质因数分解："<< factorization << "\n"; 
 		}
 		return 0;
 	}
@@ -300,7 +266,6 @@ static bool chao(string str) {
 			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 			if(bao)variables[var_name]=bl;
 			else variables.erase(var_name);
-			Achievement[3].first.second++;
 		}
 		return 0;
 	}
@@ -330,7 +295,7 @@ static bool chao(string str) {
 			string z,var;
 			
 			if (lagg==1)cout << "Complex function integration requires specifying the integration path: ";
-			else if (lagg==2)cout << "复变函数积分需要指定积分路径(变量名 参数化)：";
+			else if (lagg==2)cout << "复变函数积分需要指定积分路径：";
 			else if (lagg==3)cout << "Для интегрирования комплексной функции необходимо указать путь интегрирования: ";
 			cin >> var; 
 			getline(cin, z); // 读取剩余路径表达式
@@ -354,12 +319,11 @@ static bool chao(string str) {
 			else complex_variables.erase(var_name);
 			if (bao1)complex_variables[var]=bl1;
 			else complex_variables.erase(var);
-			Achievement[3].first.second++;
 		}
 		return 0;
 	}
 	
-	/*if (str.rfind("diff")==0){
+	if (str.rfind("diff")==0){
 		str.erase(0,5);
 		if(!str.empty()){
 			istringstream iss(str);
@@ -391,14 +355,13 @@ static bool chao(string str) {
 			complex_variables["ans"]=cld(sum);
 			if(bao)variables[var_name] = bl;
 			else variables.erase(var_name);
-			Achievement[4].first.second++;
 			return 0;
 		}
-	}*/
+	}
 
-	if (str.rfind("diff")==0)
+	if (str.rfind("complex diff")==0)
 	{
-		str.erase(0,5);
+		str.erase(0,13);
 		if(!str.empty())
 		{
 			istringstream iss(str);
@@ -419,10 +382,7 @@ static bool chao(string str) {
 			bool bao=0;
 			if (complex_variables.find(var_name)!=complex_variables.end())bl=complex_variables[var_name], bao=1;
 			auto start = chrono::high_resolution_clock::now();
-			complex_variables[var_name]=z;
-			string result = diff_calc_fu(func,var_name);
-			cout << "求导结果（可能未完全化简）：" << result << "\n";
-			cld ans = complex_calc(result);
+			cld ans = complex_diff(func,z,var_name);
 			auto end = chrono::high_resolution_clock::now();
 			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
 			if (lagg == 1)cout << "Result = ";
@@ -433,7 +393,6 @@ static bool chao(string str) {
 			if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 			if (bao)complex_variables[var_name]=bl;
 			else complex_variables.erase(var_name);
-			Achievement[4].first.second++;
 		}
 		return 0;
 	}
@@ -503,26 +462,21 @@ static bool chao(string str) {
 		    variables[var_name] = to_string(x);
 		    return calc(func); 
 		};
-		
+		auto start = chrono::high_resolution_clock::now();
 		vector<string> csv;
 		ld ans=0;
 		cout<<var_name<<"  result\n";
 		csv.push_back(var_name+"  result\n");
-		ld time=0;
 		rep(i,minn,maxn,l){
-			auto start = chrono::high_resolution_clock::now();
 			ans = f(i);
-			auto end = chrono::high_resolution_clock::now();
-			auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
-			time += duration.count() / 1000;
 			cout << i << "  " << ans << "\n";
 			csv.push_back(to_string(i)+"  "+to_string(ans)+"\n");
 		}
-		
-		if (timing) cout << "Use:" << time << " ms." << "\n";
+		auto end = chrono::high_resolution_clock::now();
+		auto duration = chrono::duration_cast<std::chrono::microseconds>(end - start);
+		if (timing) cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
 		if(bao)variables[var_name]=bl;
 		else variables.erase(var_name);
-		Achievement[13].first.second++;
 		return 0;
 	}
 
@@ -557,8 +511,7 @@ static bool chao(string str) {
 	        
 	        while (iter++ < max_iter) {
 	            ld fx = f(x0);
-	        	complex_variables[var_name]=x0;
-	            ld dfx = complex_calc(diff_calc_fu(func, var_name)).real();
+	            ld dfx = diff(func, x0, var_name);
 	            
 	            // 处理导数为零的情况
 	            if (abs(dfx) < 1e-10) {
@@ -603,7 +556,6 @@ static bool chao(string str) {
 	            cout << duration.count() / 1000.0 << " ms\n";
 	        }
 	    }
-		Achievement[12].first.second++;
 	    return 0;
 	}
 	
@@ -617,7 +569,6 @@ static bool chao(string str) {
 	
 	if (str.find("pow ") == 0) {
 		big_pow(str);
-		Achievement[14].first.second++;
 		return 0;
 	}
 
@@ -726,7 +677,6 @@ static bool chao(string str) {
 		str.erase(str.begin());
 		if (str == "all") {
 			if (!history.empty())rep(i, 0, (history.size() - 1), 1) cout << i + 1 << ": " << history[i].in << " = " << history[i].result << "\n";
-			Achievement[8].first.second++;
 			return 0;
 		}
 		int xv = calc(str);
@@ -742,7 +692,6 @@ static bool chao(string str) {
 			else if (lagg == 2)out("表达式错误。\n", RED);
 			else if (lagg == 3)out("Ошибка выражения.\n", RED);
 		}
-		Achievement[8].first.second++;
 		return 0;
 	}
 
@@ -859,13 +808,11 @@ static bool chao(string str) {
 			else if (lagg == 3)out("Переменные не могут начинаться с чисел.\n", YELLOW);
 			return 0;
 		}
-		ld result1;
 		cld result;
-		if (!complex_mode)result1 = calc(value_str);
+		if (!complex_mode)result = cld(calc(value_str));
 		else result = complex_calc(value_str);
 		ostringstream oss;
-		if (!complex_mode)oss << fixed << setprecision(80) << result1;
-		else oss << fixed << setprecision(80) << result;
+		oss << fixed << setprecision(80) << result;
 		if (!complex_mode)variables[var_name] = oss.str();
 		complex_variables[var_name] = result;
 
@@ -876,7 +823,6 @@ static bool chao(string str) {
 		}
 		else if (lagg == 2)out("变量" + var_name + "已经设为" + variables[var_name] + "\n", BLUE);
 		else if (lagg == 3)out("Variable '" + var_name + "' set to " + variables[var_name] + "\n", BLUE);
-		Achievement[7].first.second++;
 		return 0;
 	}
 
@@ -899,14 +845,14 @@ static bool chao(string str) {
 			return 0;
 		}
 
-		if (complex_variables.find(str) == complex_variables.end()) {
+		if (variables.find(str) == variables.end()) {
 			if (lagg == 1) out("Variable '" + str + "' not found.\n", YELLOW);
 			else if (lagg == 2) out("变量 '" + str + "' 不存在。\n", YELLOW);
 			else if (lagg == 3) out("Переменная '" + str + "' не найдена.\n", YELLOW);
 			return 0;
 		}
-		if (complex_variables.find(str) != complex_variables.end())variables.erase(str);
-		complex_variables.erase(str);
+
+		variables.erase(str);
 		if (lagg == 1) out("Deleted '" + str + "'\n", GREEN);
 		else if (lagg == 2) out("已删除变量 '" + str + "'\n", GREEN);
 		else if (lagg == 3) out("Переменная '" + str + "' удалена.\n", GREEN);
@@ -915,7 +861,6 @@ static bool chao(string str) {
 
 	if (str == "clear vars") {
 		variables.clear();
-		complex_variables.clear();
 		if (lagg == 1)out("Finished\n", GREEN);
 		else if (lagg == 2)out("已完成。\n", GREEN);
 		else if (lagg == 3)out("Готово.\n", GREEN);
@@ -923,7 +868,7 @@ static bool chao(string str) {
 	}
 
 	if (str == "clear window" || str == "clear") {
-		clear_screen();
+		system("cls");
 		return 0;
 	}
 
@@ -1017,7 +962,6 @@ static bool chao(string str) {
 }
 
 static void run() {
-	is_achievement();
 	cout << ">> " << flush;
 	string str;
 	getline(cin, str);
@@ -1047,7 +991,6 @@ static void run() {
 		history.push_back({str, to_string(result)});
 		variables["ans"] = to_string(result);
 		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
-		Achievement[2].first.second++;
 	} else if (high_precision) {
 		string result = high_precision_calc(str);
 		auto end = chrono::high_resolution_clock::now();
@@ -1070,12 +1013,13 @@ static void run() {
 				jia += to_string(result.size() - 1);
 				history.push_back({str, result});
 			}
+
 		} else {
 			cout << result << "\n";
 			history.push_back({str, result});
 		}
+
 		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
-		Achievement[9].first.second++;
 	}else if (complex_mode)
 	{
 		cld result = complex_calc(str);
@@ -1089,7 +1033,6 @@ static void run() {
 		history.push_back({str, to_string(result.real())+"+"+to_string(result.imag())+"i"});
 		complex_variables["ans"] = result;
 		if (timing)cout << "Use:" << duration.count() / 1000 << " ms." << "\n";
-		Achievement[10].first.second++;
 	}
 }
 

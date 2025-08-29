@@ -29,7 +29,7 @@ namespace high_precision_func {
 	    if (n % 2 == 0) return false;
 	
 	    long long d = n - 1;
-	    ll s = 0;
+	    int s = 0;
 	    while (d % 2 == 0) {
 	        d /= 2;
 	        s++;
@@ -43,7 +43,7 @@ namespace high_precision_func {
 	        if (x == 1 || x == n - 1) continue;
 	        
 	        bool composite = true;
-	        for (ll i = 0; i < s - 1; ++i) {
+	        for (int i = 0; i < s - 1; ++i) {
 	            x = mul_mod(x, x, n);
 	            if (x == n - 1) {
 	                composite = false;
@@ -83,7 +83,7 @@ namespace high_precision_func {
 	
 	        auto f = [&](const long long de) { return (mul_mod(de, de, n) + c) % n; };
 	
-	        ll power = 1, lam = 1;
+	        int power = 1, lam = 1;
 	        while (d == 1) {
 	            if (power == lam) {
 	                x = y;
@@ -99,8 +99,8 @@ namespace high_precision_func {
 	    }
 	}
 	
-	inline map<long long, ll> factorize(long long n) {
-	    map<long long, ll> factors;
+	inline map<long long, int> factorize(long long n) {
+	    map<long long, int> factors;
 	    
 	    if (n == 1) return factors;
 	    if (is_prime(n)) {
@@ -118,7 +118,7 @@ namespace high_precision_func {
 	    return factors;
 	}
 	
-	inline string format_factorization(const map<long long, ll>& factors) {
+	inline string format_factorization(const map<long long, int>& factors) {
 	    string result;
 	    bool first = true;
 	    
@@ -137,6 +137,26 @@ namespace high_precision_func {
 	    
 	    return result;
 	}
+
+	inline bool is_prime(u64 n) {
+		if (n < 2 || n % 6 % 4 != 1 && n % 6 % 4 != 5)
+			return n == 2 || n == 3;
+		u64 d = n - 1, s = 0;
+		while (d % 2 == 0) d /= 2, s++;
+		for (u64 a : {
+		         2, 325, 9375, 28178, 450775, 9780504, 1795265022
+		     }) {
+			if (a >= n) break;
+			u64 x = 1, p = d;
+			for (; p > 0; p >>= 1, a = a * a % n)
+				if (p & 1) x = x * a % n;
+			if (x == 1 || x == n - 1) continue;
+			for (u64 i = 0; i < s - 1 && x != n - 1; i++)
+				x = x * x % n;
+			if (x != n - 1) return false;
+		}
+		return true;
+	}
 	string add(string a, string b);
 	string sub(string a, string b);
 
@@ -149,16 +169,16 @@ namespace high_precision_func {
 		bool a_neg = (a[0] == '-');
 		bool b_neg = (b[0] == '-');
 		if (a_neg && b_neg) return "-" + add(a.substr(1), b.substr(1));
-		if (a_neg) return sub(b, a.substr(1));
-		if (b_neg) return sub(a, b.substr(1));
+		else if (a_neg) return sub(b, a.substr(1));
+		else if (b_neg) return sub(a, b.substr(1));
 
 		string res;
-		ll carry = 0;
-		ll i = a.size() - 1, j = b.size() - 1;
+		int carry = 0;
+		int i = a.size() - 1, j = b.size() - 1;
 		while (i >= 0 || j >= 0 || carry) {
-			ll x = (i >= 0) ? a[i--] - '0' : 0;
-			ll y = (j >= 0) ? b[j--] - '0' : 0;
-			ll sum = x + y + carry;
+			int x = (i >= 0) ? a[i--] - '0' : 0;
+			int y = (j >= 0) ? b[j--] - '0' : 0;
+			int sum = x + y + carry;
 			carry = sum / 10;
 			res.push_back(sum % 10 + '0');
 		}
@@ -180,11 +200,11 @@ namespace high_precision_func {
 		}
 
 		string res;
-		ll borrow = 0;
-		ll i = a.size() - 1, j = b.size() - 1;
+		int borrow = 0;
+		int i = a.size() - 1, j = b.size() - 1;
 		while (i >= 0) {
-			ll x = a[i--] - '0' - borrow;
-			ll y = (j >= 0) ? b[j--] - '0' : 0;
+			int x = a[i--] - '0' - borrow;
+			int y = (j >= 0) ? b[j--] - '0' : 0;
 			borrow = 0;
 			if (x < y) {
 				x += 10;
@@ -211,7 +231,7 @@ namespace high_precision_func {
 		for (char c : a_abs) {
 			current.push_back(c);
 			current = trim_zeros(current);
-			ll count = 0;
+			int count = 0;
 			while (current.size() > b_abs.size() ||
 			       (current.size() == b_abs.size() && current >= b_abs)) {
 				current = sub(current, b_abs);
@@ -226,10 +246,10 @@ namespace high_precision_func {
 	const double mm_pi = acos(-1.0);
 
 	inline void parallel_fft(vector<complex<double>>& a, bool invert) {
-		ll n = a.size();
+		int n = a.size();
 		if (n == 1) return;
 		vector<complex<double>> a0(n / 2), a1(n / 2);
-		for (ll i = 0; i < n; i += 2) {
+		for (int i = 0; i < n; i += 2) {
 			a0[i / 2] = a[i];
 			a1[i / 2] = a[i + 1];
 		}
@@ -240,7 +260,7 @@ namespace high_precision_func {
 		double ang = 2 * mm_pi / n * (invert ? -1 : 1);
 		complex<double> w(1), wn(cos(ang), sin(ang));
 
-		for (ll i = 0; i < n / 2; ++i) {
+		for (int i = 0; i < n / 2; ++i) {
 			a[i] = a0[i] + w * a1[i];
 			a[i + n / 2] = a0[i] - w * a1[i];
 			if (invert) {
@@ -268,38 +288,38 @@ namespace high_precision_func {
 		if (num1.empty() || num2.empty()) return "0";
 
 
-		ll n = 1;
+		int n = 1;
 		while (n < num1.size() + num2.size()) n <<= 1;
 
 
 		vector<complex<double>> fa(n), fb(n);
-		for (ll i = 0; i < num1.size(); ++i) fa[i] = num1[num1.size() - 1 - i] - '0';
+		for (int i = 0; i < num1.size(); ++i) fa[i] = num1[num1.size() - 1 - i] - '0';
 
-		for (ll i = 0; i < num2.size(); ++i) fb[i] = num2[num2.size() - 1 - i] - '0';
+		for (int i = 0; i < num2.size(); ++i) fb[i] = num2[num2.size() - 1 - i] - '0';
 		parallel_fft(fa, false);
 		parallel_fft(fb, false);
-		for (ll i = 0; i < n; ++i) {
+		for (int i = 0; i < n; ++i) {
 			fa[i] *= fb[i];
 		}
 
 		parallel_fft(fa, true);
 
-		vector<ll> result(n);
-		ll carry = 0;
-		for (ll i = 0; i < n; ++i) {
-			const ll value = static_cast<ll>(round(fa[i].real())) + carry;
+		vector<int> result(n);
+		int carry = 0;
+		for (int i = 0; i < n; ++i) {
+			const int value = static_cast<int>(round(fa[i].real())) + carry;
 			result[i] = value % 10;
 			carry = value / 10;
 		}
 
-		ll pos = n - 1;
+		int pos = n - 1;
 		while (pos > 0 && result[pos] == 0) --pos;
 
 
 		string res;
 		if (negative && !(pos == 0 && result[0] == 0)) res += '-';
 
-		for (ll i = pos; i >= 0; --i) res += to_string(result[i]);
+		for (int i = pos; i >= 0; --i) res += to_string(result[i]);
 
 
 		return res;

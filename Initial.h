@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include <iostream>
 #include <stack>
@@ -11,16 +11,6 @@
 #include<fstream>
 #include<chrono>
 #include<iomanip>
-#include <cstdlib>
-#include <map>
-#include <regex>
-#include <set>
-#ifdef _WIN32
-    #include <windows.h>  // ”√”⁄ Windows ∆ΩÃ®
-#else
-    #include <unistd.h>   // ”√”⁄ Unix ∆ΩÃ®
-#endif
-
 #define rep(i,a,b,l) for(auto i=(a);(l)>0?i<=(b):i>=(b);i+=(l))
 #define RESET   "\033[0m"  
 #define BLACK   "\033[30m"  
@@ -105,10 +95,6 @@ const unordered_map<string, string> constants = {
     {"sqrt2", "1.41421356237309504880168872420969807856967187537694807317667973799073247846210704"}
 };
 
-vector<string> little_knowledge;
-
-set<int> knowledge_vis;
-
 unordered_map<string, vector<pair<string, vector<string> > > > ledge;
 
 unordered_map<string, string> variables;
@@ -123,18 +109,6 @@ struct node {
 extern vector<node> history;
 
 unordered_map<string, pair<string,string> > deffunc;
-
-vector<pair<pair<string,ll>,pair<ll,int>>>Achievement;
-
-vector<ll> primes;
-
-inline void clear_screen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
 
 inline int prio(const string& c) {
     if (c == "+" || c == "-") return 1;
@@ -154,6 +128,7 @@ inline string ns(string expr) {
         if (c == ',') result += ' ';
         else result += c;
 
+
         if ((isalnum(c) || c == '.') && i < len - 1) {
             char next = expr[i + 1];
             if (string("+-*/^%()").find(next) != string::npos) result += ' ';
@@ -164,13 +139,13 @@ inline string ns(string expr) {
         }
 
         if (c == '-' && i < len - 1) {
-            bool isNegativeSign = i == 0 || string("+-*/^%( ").find(expr[i - 1]) != string::npos;
+            bool isNegativeSign = (i == 0) || (string("+-*/^%( ").find(expr[i - 1]) != string::npos);
             int j = i + 1;
             string lin;
             while (j < len && isalpha(expr[j])) lin += expr[j++];
+
             if (prio(lin) == 5) isNegativeSign = true;
             if (!isNegativeSign && expr[i + 1] != ' ') result += ' ';
-            
         }
     }
 
@@ -267,85 +242,15 @@ inline void inledge() {
     }
 }
 
-inline void in_easter_egg()
-{
-    ifstream file("easter_egg.txt");
-    if (file)
-    {
-        string line;
-        while (getline(file,line))little_knowledge.push_back(line);
-        file.close();
-    }else cout<<"Œ“µƒ–°÷™ ∂Œƒº˛ƒÿø⁄—¿£ø"<<"\n";
-}
-
-inline void inAchievement()
-{
-    ifstream file("Achievement.txt");
-    if (file)
-    {
-        string name;
-        ll num,mu;
-        int is;
-        while (file>>name>>num>>mu>>is)
-        {
-            pair<string,ll> lin = {name,num};
-            pair<ll,int> lin2 = {mu,is};
-            Achievement.push_back({lin,lin2});
-        }
-    }else
-    {
-        cout<<"¡¨’‚∏ˆ“≤√ª¡À£ø£ø£ø"<<endl;
-        return;
-    }
-    file.close();
-    ifstream fe("Shi.txt");
-    if (fe)
-    {
-        int x;
-        while (fe>>x)knowledge_vis.insert(x);
-    }
-    fe.close();
-}
-
-inline void is_achievement() {
-    for (auto& v : Achievement) { 
-        if (v.first.second == v.second.first && v.second.second != 1) {
-            cout << "ªÒµ√≥…æÕ°∞" << v.first.first << "°±£°\n";
-            v.second.second = 1;
-        }
-    }
-
-    //ofstream file("Achievement.txt");
-    //if (file.is_open()) { 
-    //    for (const auto& v : Achievement)file << v.first.first << " " << v.first.second << " " << v.second.first << " " << v.second.second << "\n";
-    //    file.close();
-    //} else cout << "Œﬁ∑®¥Úø™Œƒº˛“‘±£¥Ê≥…æÕ°£\n";
-}
-
-bool parseComplex(const string& str, ld& real, ld& imag) {
-    regex complex_re(R"(([-+]?\d*\.?\d+)([-+]\d*\.?\d*)i)");
-    smatch match;
-    if (regex_match(str, match, complex_re)) {
-        real = stod(match[1]);
-        imag = stod(match[2]);
-        return true;
-    }
-    return false;
-}
-
 inline void Ready() {
     inledge();
-    in_easter_egg();
-    inAchievement();
     int x = 1;
     rep(i, 0, 99, 1) {
         if (func[i] == "min")x = 2;
         if (!func[i].empty())yuan[i] = x;
     }
-    Achievement[0].first.second=1;
     variables["ans"]="0";
     complex_variables["ans"]=cld(0);
-    primes.push_back(2);
     cout << "========================================\n"
          << "|            MathX 2.0 Beta            |\n"
          << "|      Enter [help] for commands       |\n"
